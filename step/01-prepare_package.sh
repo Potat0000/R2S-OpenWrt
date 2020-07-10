@@ -201,9 +201,13 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-syncdial
 #Zerotier
 git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-app-zerotier
 svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
-#OLED display
-git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
-wget -O package/natelol/luci-app-oled/root/etc/init.d/oled https://github.com/msylgj/luci-app-oled/raw/patch-1/root/etc/init.d/oled
+#Syncthing
+git clone https://github.com/songchenwen/openwrt-package.git songchenwen
+mv songchenwen/package/syncthing package/songchenwen/syncthing
+mv songchenwen/others/luci-app-syncthing package/songchenwen/luci-app-syncthing
+rm -rf songchenwen
+sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/songchenwen/syncthing/Makefile
+sed -i 's/"admin", ?"nas"/"admin", "services"/g' `grep '"admin", ?"nas"' -rl package/songchenwen/luci-app-syncthing`
 
 #CF811AC wifi driver
 svn co https://github.com/project-openwrt/openwrt/branches/openwrt-18.06-dev/package/ctcgfw/rtl8821cu package/rtl8821cu
