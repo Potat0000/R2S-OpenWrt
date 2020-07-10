@@ -36,7 +36,7 @@ jobs:
             echo "##[set-output name=username;]$GITHUB_ACTOR"
           fi
 
-      - name: free disk space
+      - name: Free Disk Space
         run: |
           df -h
           sudo swapoff -a
@@ -46,7 +46,7 @@ jobs:
           df -h
           /bin/bash ./script/free_disk_space.sh
 
-      - name: Initialization environment
+      - name: Initialization Environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
@@ -60,14 +60,14 @@ jobs:
           git config --global user.name "Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Install OpenWrt source
+      - name: Install OpenWrt Source
         run: |
           git clone https://git.openwrt.org/openwrt/openwrt.git
           cd openwrt
           patch -p1 < ../patches/rockchip-add-support-for-rk3328-radxa-rock-pi-e.patch
           patch -p1 < ../patches/rockchip-add-support-for-FriendlyARM-NanoPi-R2S.patch
 
-      - name: Prepare openwrt package
+      - name: Prepare OpenWrt Package
         run: |
           cd openwrt
           cp -r ../step/* ./
@@ -90,7 +90,7 @@ jobs:
           make defconfig
           chmod -R 755 ./
 
-      - name: Add screen program
+      - name: Add Screen Program
         run: |
           mkdir -p openwrt/package/base-files/files/root
           mkdir -p openwrt/package/base-files/files/etc/init.d
@@ -100,7 +100,7 @@ jobs:
           chmod +x root/screen/screen
           chmod +x etc/init.d/screen
 
-      - name: Prepare files for OpenClash
+      - name: Prepare Files for OpenClash
         run: |
           mkdir -p etc/openclash && cd etc/openclash
           curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
@@ -125,13 +125,13 @@ jobs:
           let make_process=$(nproc)+1
           make toolchain/install -j${make_process} V=s
 
-      - name: Compile Openwrt
+      - name: Compile OpenWrt
         run: |
           cd openwrt
           let make_process=$(nproc)+1
           make -j${make_process} V=s || make -j${make_process} V=s
 
-      - name: Organize files
+      - name: Organize Files
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
@@ -145,7 +145,7 @@ jobs:
           cd ../artifact
           zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
 
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@master
         with:
           name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
