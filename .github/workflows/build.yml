@@ -1,0 +1,163 @@
+#=================================================
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: Mod from P3TERX
+# For NanoPi R2S org
+#=================================================
+
+name: OpenWrt R2S
+
+on:
+  push:
+    branches:
+      - master
+  watch:
+    types: started
+
+env:
+  SSH_ACTIONS: false
+  TZ: Asia/Shanghai
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      if: github.event.repository.owner.id == github.event.sender.id
+
+      steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set Username
+        id: set_name
+        run: |
+          if [ "$GITHUB_ACTOR" = "gyj1109" ];then
+            echo "##[set-output name=username;]Gyj1109"
+          else
+            echo "##[set-output name=username;]$GITHUB_ACTOR"
+          fi
+
+      - name: free disk space
+        run: |
+          df -h
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+          /bin/bash ./script/free_disk_space.sh
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d
+          sudo apt-get -y purge dotnet* ghc* google* llvm* mysql* php* zulu* firefox hhvm
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk
+          sudo apt-get update
+          sudo apt-get -y --no-install-recommends install build-essential asciidoc binutils bison bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python3
+          curl https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh  | sed '/#/d' | sed 's/\\//g' | sed 's/exit 0//g' | sed 's/sudo apt -y install//g' | sed 's/sudo apt-get -y install//g' | sed 's/:i386//g' | xargs sudo apt-get -y --no-install-recommends install
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk
+          git config --global user.name "Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Install OpenWrt source
+        run: |
+          git clone https://git.openwrt.org/openwrt/openwrt.git
+          cd openwrt
+          patch -p1 < ../patches/rockchip-add-support-for-rk3328-radxa-rock-pi-e.patch
+          patch -p1 < ../patches/rockchip-add-support-for-FriendlyARM-NanoPi-R2S.patch
+
+      - name: Prepare openwrt package
+        run: |
+          cd openwrt
+          cp -r ../step/* ./
+          /bin/bash 01-prepare_package.sh
+
+      - name: Convert Translation
+        run: |
+          cd openwrt
+          /bin/bash 02-convert_translation.sh
+
+      - name: Remove Upx
+        run: |
+          cd openwrt
+          /bin/bash 03-remove_upx.sh
+
+      - name: Load Config
+        run: |
+          cd openwrt
+          mv ../origin.seed .config
+          make defconfig
+          chmod -R 755 ./
+
+      - name: Add screen program
+        run: |
+          mkdir -p openwrt/package/base-files/files/root
+          mkdir -p openwrt/package/base-files/files/etc/init.d
+          mv screen openwrt/package/base-files/files/root
+          cd openwrt/package/base-files/files/
+          mv root/screen/screen.init.d etc/init.d/screen
+          chmod +x root/screen/screen
+          chmod +x etc/init.d/screen
+
+      - name: Prepare files for OpenClash
+        run: |
+          mkdir -p etc/openclash && cd etc/openclash
+          curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
+          chmod +x clash
+          cd ../..
+          echo "/etc/openclash/config/" >> etc/sysupgrade.conf
+
+      - name: Set Build Time
+        id: set_time
+        run: |
+          build_time=$(date +%Y-%m-%dT%H-%M)
+          echo -e "\033[32m\033[1m$build_time\033[0m"
+          echo "##[set-output name=build_time;]$build_time"
+
+      - name: Setup Debug Session
+        if: env.SSH_ACTIONS == 'true'
+        uses: P3TERX/debugger-action@master
+
+      - name: Make Toolchain
+        run: |
+          cd openwrt
+          let make_process=$(nproc)+1
+          make toolchain/install -j${make_process} V=s
+
+      - name: Compile Openwrt
+        run: |
+          cd openwrt
+          let make_process=$(nproc)+1
+          make -j${make_process} V=s || make -j${make_process} V=s
+
+      - name: Organize files
+        run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          mv openwrt/bin/targets/*/*/*squashfs-sysupgrade.img* ./artifact/
+          cd ./artifact/
+          gzip -d *.gz && exit 0
+          gzip *.img
+          cd ../openwrt
+          cp .config ../artifact/config-origin-full
+          ./scripts/diffconfig.sh > ../artifact/config.seed
+          cd ../artifact
+          zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
+          path: ./artifact/
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "OpenWrt-R2S-${{ steps.set_name.outputs.username }}-*-ROM.zip,artifact/config.seed"
+          body: Built at ${{ steps.set_time.outputs.build_time }}
+          commit: ${{ github.sha }}
+          name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
+          tag: ${{ steps.set_time.outputs.build_time }}
+          token: ${{ secrets.sec_token }}
