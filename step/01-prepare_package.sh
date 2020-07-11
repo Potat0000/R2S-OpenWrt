@@ -195,5 +195,5 @@ sed -i "s,boardinfo.system,'ARMv8',g" feeds/luci/modules/luci-mod-status/htdocs/
 chmod -R 755 ./
 sed -i '/DISTRIB_REVISION/d' package/base-files/files/etc/openwrt_release
 sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
-echo "DISTRIB_DESCRIPTION='Gyj1109 Build'" >> package/base-files/files/etc/openwrt_release
+echo "DISTRIB_DESCRIPTION='Gyj1109 Built at'" >> package/base-files/files/etc/openwrt_release
 exit 0
