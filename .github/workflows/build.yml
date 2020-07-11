@@ -141,8 +141,8 @@ jobs:
           gzip -d *.gz && exit 0
           gzip *.img
           cd ../openwrt
-          cp .config ../artifact/config-origin-full
-          ./scripts/diffconfig.sh > ../artifact/config.seed
+          cp .config ../artifact/config.seed
+          ./scripts/diffconfig.sh > ../artifact/config.slim.seed
           cd ../artifact
           zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
 
