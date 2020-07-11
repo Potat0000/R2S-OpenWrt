@@ -8,7 +8,7 @@ https://github.com/gyj1109/R2S-OpenWrt/releases
 
 #### 刷入帮助
 
-* 使用 [balenaEtcher](https://www.balena.io/etcher/) 刷写时需解压出`.img`文件后刷入
+* 使用 [Rufus](https://rufus.ie/) 刷写时需解压出`.img`文件后刷入
 
 ### 管理后台
 
