@@ -205,6 +205,7 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-syncdial
 git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-app-zerotier
 svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #Syncthing
+find package -name "*syncthing*" | xargs rm -rf
 git clone https://github.com/songchenwen/openwrt-package.git songchenwen
 mkdir -p package/songchenwen
 mv songchenwen/package/syncthing package/songchenwen/syncthing
