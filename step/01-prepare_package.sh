@@ -120,6 +120,11 @@ git clone -b master --single-branch https://github.com/vernesong/OpenClash.git O
 mkdir -p package/vernesong
 mv OpenClash/luci-app-openclash package/vernesong/luci-app-openclash
 rm -rf OpenClash
+mkdir -p package/base-files/files/etc/openclash/core
+cd package/base-files/files/etc/openclash/core
+curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
+chmod +x clash
+cd ../../../../../..
 #SeverChan
 git clone -b master --single-branch https://github.com/tty228/luci-app-serverchan package/new/luci-app-serverchan
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils

@@ -100,15 +100,6 @@ jobs:
           chmod +x root/screen/screen
           chmod +x etc/init.d/screen
 
-      - name: Prepare Files for OpenClash
-        run: |
-          mkdir -p openwrt/package/base-files/files/etc/openclash
-          cd openwrt/package/base-files/files/etc/openclash
-          curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
-          chmod +x clash
-          cd ../..
-          echo "/etc/openclash/config/" >> etc/sysupgrade.conf
-
       - name: Set Build Time
         id: set_time
         run: |
