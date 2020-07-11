@@ -153,7 +153,10 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-wrtbwmon
 #流量监管
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-netdata package/lean/luci-app-netdata
 #OpenClash
-svn co https://github.com/vernesong/OpenClash/trunk/luci-app-openclash package/new/luci-app-openclash
+git clone -b master --single-branch https://github.com/vernesong/OpenClash.git OpenClash
+mkdir -p package/vernesong
+mv OpenClash/luci-app-openclash package/vernesong/luci-app-openclash
+rm -rf OpenClash
 #SeverChan
 git clone -b master --single-branch https://github.com/tty228/luci-app-serverchan package/new/luci-app-serverchan
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils
@@ -203,11 +206,12 @@ git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-a
 svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #Syncthing
 git clone https://github.com/songchenwen/openwrt-package.git songchenwen
+mkdir -p package/songchenwen
 mv songchenwen/package/syncthing package/songchenwen/syncthing
 mv songchenwen/others/luci-app-syncthing package/songchenwen/luci-app-syncthing
 rm -rf songchenwen
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/songchenwen/syncthing/Makefile
-sed -i 's/"admin", ?"nas"/"admin", "services"/g' `grep '"admin", ?"nas"' -rl package/songchenwen/luci-app-syncthing`
+sed -E -i 's/"admin", ?"nas"/"admin", "services"/g' `grep -E '"admin", ?"nas"' -rl package/songchenwen/luci-app-syncthing`
 
 #CF811AC wifi driver
 svn co https://github.com/project-openwrt/openwrt/branches/openwrt-18.06-dev/package/ctcgfw/rtl8821cu package/rtl8821cu
