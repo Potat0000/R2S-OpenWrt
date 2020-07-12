@@ -4,7 +4,7 @@
 START=99
 
 start() {
-    nohup /root/screen/screen 2>&1 &
+    nohup /usr/bin/screen 2>&1 &
 }
 
 stop() {

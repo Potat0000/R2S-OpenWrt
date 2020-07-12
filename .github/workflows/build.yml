@@ -96,8 +96,9 @@ jobs:
           mkdir -p openwrt/package/base-files/files/etc/init.d
           mv screen openwrt/package/base-files/files/root
           cd openwrt/package/base-files/files/
+          mv root/screen/screen usr/bin/screen
           mv root/screen/screen.init.d etc/init.d/screen
-          chmod +x root/screen/screen
+          chmod +x usr/bin/screen
           chmod +x etc/init.d/screen
 
       - name: Set Build Time
