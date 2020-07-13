@@ -8,7 +8,10 @@ https://github.com/gyj1109/R2S-OpenWrt/releases
 
 #### 刷入帮助
 
-* 使用 [Rufus](https://rufus.ie/) 刷写时需解压出`.img`文件后刷入
+刷写时需解压出`.img`文件后刷入
+
+* 首次刷写可使用 [Rufus](https://rufus.ie/)，刷入后在终端中运行`firstboot`后输入`y`，然后重启
+* 后续可使用 系统 - 备份/升级 菜单完成升级
 
 ### 管理后台
 
