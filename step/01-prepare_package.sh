@@ -180,7 +180,8 @@ git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-a
 svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #OLED display
 git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
-wget -O package/natelol/luci-app-oled/root/etc/init.d/oled https://github.com/msylgj/luci-app-oled/raw/patch-1/root/etc/init.d/oled
+sed -i '/#crontab daemon/,+4d' package/natelol/luci-app-oled/root/etc/init.d/oled
+wget -O package/natelol/luci-app-oled/src/Example_Code/example_app.c https://raw.githubusercontent.com/gyj1109/luci-app-oled/patch-1/src/Example_Code/example_app.c
 #Syncthing
 find package -name "*syncthing*" | xargs rm -rf
 git clone https://github.com/songchenwen/openwrt-package.git songchenwen
