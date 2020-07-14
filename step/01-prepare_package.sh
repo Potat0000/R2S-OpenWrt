@@ -179,7 +179,8 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-syncdial
 git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-app-zerotier
 svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #OLED display
-git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
+#git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
+git clone -b master --single-branch https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
 #Syncthing
 find package -name "*syncthing*" | xargs rm -rf
 git clone https://github.com/songchenwen/openwrt-package.git songchenwen
