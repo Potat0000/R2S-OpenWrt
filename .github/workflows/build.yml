@@ -33,7 +33,7 @@ jobs:
           if [ "$GITHUB_ACTOR" = "gyj1109" ];then
             echo "##[set-output name=username;]Gyj1109"
           else
-            echo "##[set-output name=username;]$GITHUB_ACTOR"
+            echo "##[set-output name=username;]`echo $GITHUB_REPOSITORY | cut -d / -f 2`"
           fi
 
       - name: Free Disk Space
