@@ -25,7 +25,7 @@ jobs:
 
       steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@main
 
       - name: Set Username
         id: set_name
@@ -126,7 +126,7 @@ jobs:
           zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@main
         with:
           name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
           path: ./artifact/
