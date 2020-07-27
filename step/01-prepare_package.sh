@@ -122,8 +122,9 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autorebo
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-adbyby-plus package/lean/luci-app-adbyby-plus
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/adbyby package/lean/coremark/adbyby
 #gost
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/gost package/ctcgfw/gost
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/luci-app-gost package/ctcgfw/luci-app-gost
+svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/gost package/ctcgfw/gost
+# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/luci-app-gost package/ctcgfw/luci-app-gost
+svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/luci-app-gost package/ctcgfw/luci-app-gost
 #SSRP
 svn co https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus package/lean/luci-app-ssr-plus
 rm -rf ./package/lean/luci-app-ssr-plus/luasrc/view/shadowsocksr/ssrurl.htm
@@ -235,7 +236,7 @@ svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-trojan-se
 # svn co https://github.com/openwrt/packages/trunk/utils/runc package/lean/runc
 # svn co https://github.com/openwrt/packages/trunk/lang/golang package/lang/golang
 #multiwan support
-# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/lean/luci-app-syncdial package/lean/luci-app-syncdial
+# svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/luci-app-syncdial package/lean/luci-app-syncdial
 # rm -rf feeds/packages/net/mwan3
 # rm -rf feeds/luci/applications/luci-app-mwan3
 # svn co https://github.com/coolsnowwolf/luci/trunk/applications/luci-app-mwan3 feeds/luci/applications/luci-app-mwan3
@@ -243,9 +244,10 @@ svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-trojan-se
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-mwan3helper package/lean/luci-app-mwan3helper
 #Zerotier
 # git clone https://github.com/rufengsuixing/luci-app-zerotier package/lean/luci-app-zerotier
+# svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/luci-app-zerotier package/lean/luci-app-zerotier
 # svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #OLED display
-#git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
+# git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
 git clone -b master --single-branch https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
 #fix zstd
 rm -rf ./feeds/packages/utils/zstd
@@ -280,6 +282,7 @@ svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/rtl8821cu
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 #翻译
 git clone -b master --single-branch https://github.com/QiuSimons/addition-trans-zh package/lean/lean-translate
+rm -rf package/lean/lean-translate/files/zzz-default-settings
 cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-settings
 
 #生成默认配置及缓存
