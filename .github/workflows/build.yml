@@ -62,7 +62,11 @@ jobs:
 
       - name: Install OpenWrt Source
         run: |
-          git clone -b nanopi-r2s https://git.openwrt.org/openwrt/staging/blocktrron.git openwrt
+          #git clone -b nanopi-r2s https://git.openwrt.org/openwrt/staging/blocktrron.git openwrt
+          git clone https://git.openwrt.org/openwrt/openwrt.git
+          cd openwrt
+          patch -p1 < ../patches/rockchip-add-support-for-rk3328-radxa-rock-pi-e.patch
+          patch -p1 < ../patches/rockchip-add-support-for-FriendlyARM-NanoPi-R2S.patch
 
       - name: Prepare OpenWrt Package
         run: |
@@ -93,7 +97,7 @@ jobs:
           build_time=$(date +%Y-%m-%dT%H-%M)
           echo -e "\033[32m\033[1m$build_time\033[0m"
           echo "##[set-output name=build_time;]$build_time"
-          sed -i s/BUILDVERSION/$build_time/g openwrt/package/base-files/files/etc/openwrt_release
+          sed -i s/BUILDVERSION/$build_time/g openwrt/package/lean/lean-translate/files/zzz-default-settings
 
       - name: Setup Debug Session
         if: env.SSH_ACTIONS == 'true'
