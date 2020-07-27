@@ -33,6 +33,12 @@ uci commit uhttpd
 
 #sed -i 's,/opt,/overlay,g' /etc/config/dockerman
 
+#Mark
+sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release
+echo "DISTRIB_REVISION='BUILDVERSION'" >> /etc/openwrt_release
+sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
+echo "DISTRIB_DESCRIPTION='Gyj1109 Build @ BUILDVERSION'" >> /etc/openwrt_release
+
 #SSL
 sed -i 's,#afalg,afalg,g' /etc/ssl/openssl.cnf
 sed -i 's/#devcrypto/devcrypto/g' /etc/ssl/openssl.cnf

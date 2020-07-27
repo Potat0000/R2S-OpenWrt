@@ -281,14 +281,9 @@ svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/rtl8821cu
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 #翻译
 git clone -b master --single-branch https://github.com/QiuSimons/addition-trans-zh package/lean/lean-translate
-wget -O package/lean/lean-translate/files/zzz-default-settings https://github.com/quintus-lab/Openwrt-R2S/raw/master/script/zzz-default-settings
+cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-settings
 
 #生成默认配置及缓存
 rm -rf .config
-#修正架构
-sed -i "s,boardinfo.system,'ARMv8',g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-chmod -R 755 ./
-sed -i '/DISTRIB_REVISION/d' package/base-files/files/etc/openwrt_release
-sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
-echo "DISTRIB_DESCRIPTION='Gyj1109 Build'" >> package/base-files/files/etc/openwrt_release
+
 exit 0
