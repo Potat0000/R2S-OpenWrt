@@ -247,12 +247,7 @@ svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-trojan-se
 # svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/luci-app-zerotier package/lean/luci-app-zerotier
 # svn co https://github.com/coolsnowwolf/packages/trunk/net/zerotier package/lean/zerotier
 #OLED display
-# git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
-git clone -b master --single-branch https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
-#fix zstd
-rm -rf ./feeds/packages/utils/zstd
-#svn co https://github.com/project-openwrt/packages/trunk/utils/zstd feeds/packages/utils/zstd
-svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
+git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
 #OpenClash
 git clone -b master --single-branch https://github.com/vernesong/OpenClash.git OpenClash
 mkdir -p package/vernesong
@@ -274,7 +269,7 @@ sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/
 sed -E -i 's/"admin", ?"nas"/"admin", "services"/g' `grep -E '"admin", ?"nas"' -rl package/songchenwen/luci-app-syncthing`
 #CF811AC wifi driver
 # svn co https://github.com/project-openwrt/openwrt/branches/openwrt-18.06-dev/package/ctcgfw/rtl8821cu package/rtl8821cu
-svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/rtl8821cu package/ctcgfw/rtl8821cu
+# svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/rtl8821cu package/ctcgfw/rtl8821cu
 # mkdir package/base-files/files/etc/hotplug.d/usb
 # wget -P package/base-files/files/etc/hotplug.d/usb https://github.com/friendlyarm/friendlywrt/raw/master-v19.07.1/package/base-files/files/etc/hotplug.d/usb/31-usb_wifi
 
