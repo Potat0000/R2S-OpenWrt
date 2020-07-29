@@ -197,8 +197,8 @@ svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/tcpping pac
 # svn co https://github.com/Lienol/openwrt-package/trunk/package/openssl1.1 package/lienol/openssl1.1
 # svn co https://github.com/Lienol/openwrt-package/trunk/package/simple-obfs package/lienol/simple-obfs
 
-#edge主题
-# git clone -b master --single-branch https://github.com/garypang13/luci-theme-edge package/new/luci-theme-edge
+#主题
+git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
 
 #订阅转换
 # svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/subconverter package/new/subconverter
