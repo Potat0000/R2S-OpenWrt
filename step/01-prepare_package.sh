@@ -287,11 +287,8 @@ cd ../../../../../..
 #Syncthing
 find package -name "*syncthing*" | xargs rm -rf
 git clone https://github.com/songchenwen/openwrt-package.git songchenwen
-mkdir -p package/songchenwen
-mv songchenwen/package/syncthing package/songchenwen/syncthing
-mv songchenwen/others/luci-app-syncthing package/songchenwen/luci-app-syncthing
-rm -rf songchenwen
-sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/songchenwen/syncthing/Makefile
+mv ../syncthing package/
+sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/syncthing/syncthing/Makefile
 sed -i 's/nas/services/g' `grep 'nas' -rl package/songchenwen/luci-app-syncthing`
 sed -i '/NAS/d' `grep 'NAS' -rl package/songchenwen/luci-app-syncthing`
 
