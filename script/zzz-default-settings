@@ -7,8 +7,8 @@ uci set system.@system[0].timezone=CST-8
 uci set system.@system[0].zonename=Asia/Shanghai
 uci commit system
 
-sed -i 's/local ucic = uci.cursor()/local ucic = luci.model.uci.cursor()/g' /usr/share/shadowsocksr/subscribe.lua
-sed -i "s/'cbid.shadowsocksr.'/'widget.cbid.shadowsocksr.'/g" /usr/lib/lua/luci/view/shadowsocksr/ssrurl.htm
+# sed -i 's/local ucic = uci.cursor()/local ucic = luci.model.uci.cursor()/g' /usr/share/shadowsocksr/subscribe.lua
+# sed -i "s/'cbid.shadowsocksr.'/'widget.cbid.shadowsocksr.'/g" /usr/lib/lua/luci/view/shadowsocksr/ssrurl.htm
 
 sed -i 's/0/1/g' /etc/config/irqbalance
 
