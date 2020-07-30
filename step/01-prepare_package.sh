@@ -140,6 +140,10 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_dnsp
 # svn co https://github.com/openwrt/packages/branches/openwrt-18.06/net/ddns-scripts feeds/packages/net/ddns-scripts
 # svn co https://github.com/openwrt/luci/branches/openwrt-18.06/applications/luci-app-ddns feeds/luci/applications/luci-app-ddns
 
+#Collectd
+find package -name "*collectd*" | xargs rm -rf
+svn co https://github.com/openwrt/packages/branches/openwrt-19.07/utils/collectd package/collectd
+
 #定时重启
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
 
@@ -287,7 +291,6 @@ cd ../../../../../..
 
 #Syncthing
 find package -name "*syncthing*" | xargs rm -rf
-git clone https://github.com/songchenwen/openwrt-package.git songchenwen
 mv ../syncthing package/
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/syncthing/syncthing/Makefile
 sed -i 's/nas/services/g' `grep 'nas' -rl package/songchenwen/luci-app-syncthing`
