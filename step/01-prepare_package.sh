@@ -8,7 +8,10 @@ clear
 #scons patch
 # wget -P include/ https://raw.githubusercontent.com/openwrt/openwrt/openwrt-19.07/include/scons.mk
 #更新feed
-./scripts/feeds update -a && ./scripts/feeds install -a
+./scripts/feeds update -a
+rm -rf feeds/packages/utils/collectd
+svn co https://github.com/openwrt/packages/branches/openwrt-19.07/utils/collectd feeds/packages/utils/collectd
+./scripts/feeds install -a
 #O3
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
@@ -139,10 +142,6 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_aliy
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_dnspod package/lean/ddns-scripts_dnspod
 # svn co https://github.com/openwrt/packages/branches/openwrt-18.06/net/ddns-scripts feeds/packages/net/ddns-scripts
 # svn co https://github.com/openwrt/luci/branches/openwrt-18.06/applications/luci-app-ddns feeds/luci/applications/luci-app-ddns
-
-#Collectd
-find package -name "*collectd*" | xargs rm -rf
-svn co https://github.com/openwrt/packages/branches/openwrt-19.07/utils/collectd package/collectd
 
 #定时重启
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
