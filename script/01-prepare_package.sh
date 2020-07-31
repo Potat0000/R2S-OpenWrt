@@ -132,6 +132,7 @@ rm -rf ./feeds/packages/utils/coremark
 rm -rf ./package/feeds/packages/coremark
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/coremark package/lean/coremark
 sed -i 's,-DMULTIT,-Ofast -DMULTIT,g' package/lean/coremark/Makefile
+sed -i '9,$d' package/lean/coremark/coremark.sh
 
 #DDNS
 # rm -rf ./feeds/packages/net/ddns-scripts
