@@ -1,7 +1,8 @@
 #!/bin/bash
 clear
-# rm -f ./feeds.conf.default
+rm -f ./feeds.conf.default
 # wget https://raw.githubusercontent.com/openwrt/openwrt/openwrt-19.07/feeds.conf.default
+wget https://raw.githubusercontent.com/openwrt/openwrt/master/feeds.conf.default
 #remove annoying snapshot tag
 # sed -i 's,SNAPSHOT,,g' include/version.mk
 # sed -i 's,snapshots,,g' package/base-files/image-config.in
