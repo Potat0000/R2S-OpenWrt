@@ -67,7 +67,7 @@ jobs:
       - name: Prepare OpenWrt Package
         run: |
           cd openwrt
-          cp -r ../step/* ./
+          cp -r ../script/0* ./
           /bin/bash 01-prepare_package.sh
 
       - name: Convert Translation
