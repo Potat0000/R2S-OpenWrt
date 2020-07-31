@@ -142,8 +142,7 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_dnsp
 # svn co https://github.com/openwrt/luci/branches/openwrt-18.06/applications/luci-app-ddns feeds/luci/applications/luci-app-ddns
 
 #Collectd
-find package -name "*collectd*" | xargs rm -rf
-svn co https://github.com/openwrt/packages/branches/openwrt-19.07/utils/collectd package/collectd
+sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/collectd/Makefile
 
 #定时重启
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
