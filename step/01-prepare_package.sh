@@ -293,8 +293,6 @@ cd ../../../../../..
 find package -name "*syncthing*" | xargs rm -rf
 mv ../syncthing package/
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=v$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" package/syncthing/syncthing/Makefile
-sed -i 's/nas/services/g' `grep 'nas' -rl package/songchenwen/luci-app-syncthing`
-sed -i '/NAS/d' `grep 'NAS' -rl package/songchenwen/luci-app-syncthing`
 
 #最大连接
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
