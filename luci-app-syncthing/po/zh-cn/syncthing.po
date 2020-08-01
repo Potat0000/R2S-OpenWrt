@@ -1,5 +1,0 @@
-msgid "Syncthing"
-msgstr "Syncthing"
-
-msgid "Syncthing Synchronization Tool"
-msgstr "Syncthing 存储同步工具"
