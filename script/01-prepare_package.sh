@@ -47,7 +47,8 @@ popd
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/shortcut-fe package/new/shortcut-fe
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/fast-classifier package/new/fast-classifier
 #Over Clock to 1.6G
-cp -f ../patches/999-unlock-1608mhz-rk3328.patch ./target/linux/rockchip/patches-5.4/999-unlock-1608mhz-rk3328.patch
+sed -i "s/1450000/1650000/g" ./target/linux/rockchip/patches-5.4/001-rockchip-rk3328-Add-support-for-FriendlyARM-NanoPi-R.patch
+cp -f ../patches/999-rk3328-overclocking.patch ./target/linux/rockchip/patches-5.4/999-rk3328-overclocking.patch
 rm -f ./target/linux/rockchip/patches-5.4/004-unlock-1512mhz-rk3328.patch
 #patch config-5.4 support docker
 echo '
