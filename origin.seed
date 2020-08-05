@@ -195,6 +195,7 @@ CONFIG_PACKAGE_smartmontools=y
 CONFIG_PACKAGE_socat=y
 CONFIG_PACKAGE_ss=y
 CONFIG_PACKAGE_stress=y
+CONFIG_PACKAGE_subconverter=y
 CONFIG_PACKAGE_ttyd=y
 CONFIG_PACKAGE_usb-modeswitch=y
 CONFIG_PACKAGE_wget=y
