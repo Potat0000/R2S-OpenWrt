@@ -125,11 +125,12 @@ cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-
 
 #Additional package
 
+#Themes
+git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
+git clone -b master --single-branch https://github.com/garypang13/luci-theme-edge.git package/new/luci-theme-edge
+
 #AppFilter
 git clone -b master --single-branch https://github.com/destan19/OpenAppFilter package/new/OpenAppFilter
-
-#Argon theme
-git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
 
 #Arpbind
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
