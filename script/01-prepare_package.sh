@@ -1,9 +1,7 @@
 #!/bin/bash
 clear
 rm -f ./feeds.conf.default
-# wget https://raw.githubusercontent.com/openwrt/openwrt/master/feeds.conf.default
-wget https://raw.githubusercontent.com/openwrt/openwrt/openwrt-19.07/feeds.conf.default
-wget -P include/ https://raw.githubusercontent.com/openwrt/openwrt/openwrt-19.07/include/scons.mk
+wget https://raw.githubusercontent.com/openwrt/openwrt/master/feeds.conf.default
 #Update feed
 ./scripts/feeds update -a && ./scripts/feeds install -a
 #O3
