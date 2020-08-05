@@ -23,10 +23,10 @@ cp -f ../patches/900-add-filter-aaaa-option.patch ./package/network/services/dns
 git clone -b master --single-branch https://github.com/QiuSimons/openwrt-fullconenat package/fullconenat
 #Patch FireWall for fullcone
 mkdir package/network/config/firewall/patches
-wget -P package/network/config/firewall/patches/ https://github.com/LGA1150/fullconenat-fw3-patch/raw/master/fullconenat.patch
+wget -P package/network/config/firewall/patches/ https://raw.githubusercontent.com/LGA1150/fullconenat-fw3-patch/master/fullconenat.patch
 #Patch LuCI for fullcone
 pushd feeds/luci
-wget -O- https://github.com/LGA1150/fullconenat-fw3-patch/raw/master/luci.patch | git apply
+wget -O - https://raw.githubusercontent.com/LGA1150/fullconenat-fw3-patch/master/luci.patch | git apply
 popd
 #Patch Kernel for fullcone
 pushd target/linux/generic/hack-5.4
