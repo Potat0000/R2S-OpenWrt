@@ -368,7 +368,7 @@ svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 sed -i 's/exit 0/uci delete network.lan.ip6assign\nuci delete network.wan6\nuci delete dhcp.lan.ra\nuci delete dhcp.lan.dhcpv6\nuci delete dhcp.lan.ndp\nuci commit\nuci commit dhcp\nuci commit network\n\nexit 0/g' package/lean/lean-translate/files/zzz-default-settings
 
 #署名
-sed -i '$d' package/lean/lean-translate/files/zzz-default-settings
+sed -i '/exit 0/d' package/lean/lean-translate/files/zzz-default-settings
 echo "sed -i '/DISTRIB_REVISION/d' /etc/openwrt_release\necho \"DISTRIB_REVISION='BUILDVERSION'\" >> /etc/openwrt_release\nsed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release\necho \"DISTRIB_DESCRIPTION='Gyj1109 Build @ BUILDVERSION'\" >> /etc/openwrt_release\n\nexit 0" >> package/lean/lean-translate/files/zzz-default-settings
 
 #最大连接
