@@ -185,7 +185,7 @@ sed -i 's,-DMULTIT,-Ofast -DMULTIT,g' package/lean/coremark/Makefile
 sed -i '9,$d' package/lean/coremark/coremark.sh
 
 #oled
-git clone -b master --single-branch https://github.com/NateLol/luci-app-oled package/new/luci-app-oled
+git clone -b master --single-branch https://github.com/gyj1109/luci-app-oled package/new/luci-app-oled
 
 #网易云解锁
 git clone -b master --single-branch https://github.com/project-openwrt/luci-app-unblockneteasemusic package/new/UnblockNeteaseMusic
