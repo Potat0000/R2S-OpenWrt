@@ -83,11 +83,11 @@ diff --git a/feeds/luci/applications/luci-app-firewall/htdocs/luci-static/resour
  
  		/* Netfilter flow offload support */
  
-+		s = m.section(form.TypedSection, 'defaults', _('Routing/NAT Offloading'), _('SFE based offloading for Routing/NAT. Restart recommended.'));
++		s = m.section(form.TypedSection, 'defaults', _('Routing/NAT Offloading'), _('Experimental feature. Not fully compatible with QoS/SQM.'));
 +        s.anonymous = true;
 +        s.addremove = false;
 +        o = s.option(sfe, _('SFE flow offloading'),
-+			_('SFE flow offloading'));
++			_('SFE flow offloading'), _('SFE based offloading for Routing/NAT. Restart recommended.'));
 +        o.sfe_support = sfe_support;
 +        o.load = function (section_id) {
 +            return (uci.get('system', 'shortcut-fe', 'enabled') != 0) ? '1' : '0';

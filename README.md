@@ -42,4 +42,4 @@ https://github.com/gyj1109/R2S-OpenWrt/releases
 
 ### 感谢
 
-* [quintus-lab/Openwrt-R2S](https://github.com/quintus-lab/Openwrt-R2S)
+* [QiuSimons/R2S-OpenWrt](https://github.com/QiuSimons/R2S-OpenWrt)
