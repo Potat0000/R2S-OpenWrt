@@ -159,24 +159,18 @@ CONFIG_SG_SPLIT=y
 
 #Additional package
 
-#beardropper
-git clone https://github.com/NateLol/luci-app-beardropper package/luci-app-beardropper
-sed -i 's/"luci.fs"/"luci.sys".net/g' package/luci-app-beardropper/luasrc/model/cbi/beardropper/setting.lua
-sed -i '/firewall/d' package/luci-app-beardropper/root/etc/uci-defaults/luci-beardropper
-
-#luci-app-freq
-svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/luci-app-cpufreq package/lean/luci-app-cpufreq
-patch -p1 < ../patches/package/luci-app-freq.patch
-
-#京东签到
-git clone https://github.com/jerrykuku/node-request package/new/node-request
-git clone https://github.com/jerrykuku/luci-app-jd-dailybonus package/new/luci-app-jd-dailybonus
-
-#arpbind
-svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
-
-#访问控制
+#AccessControl
 svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-accesscontrol package/lean/luci-app-accesscontrol
+
+#AdGuard
+cp -rf ../openwrt-lienol/package/diy/luci-app-adguardhome ./package/new/luci-app-adguardhome
+svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ntlf9t/AdGuardHome package/new/AdGuardHome
+
+#AppFilter
+git clone -b master --single-branch https://github.com/destan19/OpenAppFilter package/new/OpenAppFilter
+
+#Arpbind
+svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
 
 #AutoCore
 svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/autocore package/lean/autocore
@@ -184,31 +178,29 @@ svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/coremark package/
 sed -i 's,-DMULTIT,-Ofast -DMULTIT,g' package/lean/coremark/Makefile
 sed -i '9,$d' package/lean/coremark/coremark.sh
 
-#oled
+#Beardropper
+git clone https://github.com/NateLol/luci-app-beardropper package/luci-app-beardropper
+sed -i 's/"luci.fs"/"luci.sys".net/g' package/luci-app-beardropper/luasrc/model/cbi/beardropper/setting.lua
+sed -i '/firewall/d' package/luci-app-beardropper/root/etc/uci-defaults/luci-beardropper
+
+#Collectd
+rm -rf ./feeds/packages/utils/collectd
+svn co https://github.com/openwrt/packages/trunk/utils/collectd feeds/packages/utils/collectd
+sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/collectd/Makefile
+
+#CpuFreq
+svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/luci-app-cpufreq package/lean/luci-app-cpufreq
+patch -p1 < ../patches/package/luci-app-freq.patch
+
+#FullCone
+cp -rf ../openwrt-lienol/package/network/fullconenat ./package/network/fullconenat
+
+#JD-DailyBonus(京东签到)
+git clone https://github.com/jerrykuku/node-request package/new/node-request
+git clone https://github.com/jerrykuku/luci-app-jd-dailybonus package/new/luci-app-jd-dailybonus
+
+#OLED
 git clone -b master --single-branch https://github.com/gyj1109/luci-app-oled package/new/luci-app-oled
-
-#网易云解锁
-git clone -b master --single-branch https://github.com/project-openwrt/luci-app-unblockneteasemusic package/new/UnblockNeteaseMusic
-
-#Argon主题
-git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon package/new/luci-theme-argon
-
-#Edge主题
-git clone -b master --single-branch https://github.com/garypang13/luci-theme-edge package/new/luci-theme-edge
-
-#AdGuard
-cp -rf ../openwrt-lienol/package/diy/luci-app-adguardhome ./package/new/luci-app-adguardhome
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ntlf9t/AdGuardHome package/new/AdGuardHome
-
-#订阅转换
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/subconverter package/new/subconverter
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/jpcre2 package/new/jpcre2
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/rapidjson package/new/rapidjson
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/duktape package/new/duktape
-
-#流量监视
-git clone -b master --single-branch https://github.com/brvphoenix/wrtbwmon package/new/wrtbwmon
-git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbwmon package/new/luci-app-wrtbwmon
 
 #OpenClash
 svn co https://github.com/vernesong/OpenClash/branches/master/luci-app-openclash package/new/luci-app-openclash
@@ -218,9 +210,19 @@ curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-lin
 chmod +x clash
 cd ../../../../../..
 
+#SFE
+svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/shortcut-fe package/new/shortcut-fe
+svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/fast-classifier package/new/fast-classifier
+
 #SmartDNS
 svn co https://github.com/pymumu/smartdns/trunk/package/openwrt package/new/smartdns
 git clone -b lede --single-branch https://github.com/pymumu/luci-app-smartdns package/new/luci-app-smartdns/
+
+#SubConverter
+svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/subconverter package/new/subconverter
+svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/jpcre2 package/new/jpcre2
+svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/rapidjson package/new/rapidjson
+svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/duktape package/new/duktape
 
 #Syncthing
 git clone https://github.com/gyj1109/luci-app-syncthing package/gyj1109/luci-app-syncthing
@@ -228,32 +230,28 @@ sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/utils/syncthing/Makefile
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" feeds/packages/utils/syncthing/Makefile
 sed -i 's,/etc/syncthing,/etc/syncthing/cert.pem\n/etc/syncthing/config.xml\n/etc/syncthing/https-cert.pem\n/etc/syncthing/https-key.pem\n/etc/syncthing/key.pem,g' feeds/packages/utils/syncthing/Makefile
 
-#上网APP过滤
-git clone -b master --single-branch https://github.com/destan19/OpenAppFilter package/new/OpenAppFilter
+#Theme
+git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon package/new/luci-theme-argon
+git clone -b master --single-branch https://github.com/garypang13/luci-theme-edge package/new/luci-theme-edge
+
+#Translate
+git clone -b master --single-branch https://github.com/QiuSimons/addition-trans-zh package/lean/lean-translate
+
+#UnblockNeteaseMusic
+git clone -b master --single-branch https://github.com/project-openwrt/luci-app-unblockneteasemusic package/new/UnblockNeteaseMusic
+
+#Wrtbwmon(流量监视)
+git clone -b master --single-branch https://github.com/brvphoenix/wrtbwmon package/new/wrtbwmon
+git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbwmon package/new/luci-app-wrtbwmon
+
+#zstd
+rm -rf ./feeds/packages/utils/zstd
+svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 
 #补全部分依赖（实际上并不会用到）
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/utils/fuse package/utils/fuse
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/services/samba36 package/network/services/samba36
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/libs/libconfig package/libs/libconfig
-
-#Collectd
-rm -rf ./feeds/packages/utils/collectd
-svn co https://github.com/openwrt/packages/trunk/utils/collectd feeds/packages/utils/collectd
-sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/collectd/Makefile
-
-#FullCone模块
-cp -rf ../openwrt-lienol/package/network/fullconenat ./package/network/fullconenat
-
-#翻译及部分功能优化
-git clone -b master --single-branch https://github.com/QiuSimons/addition-trans-zh package/lean/lean-translate
-
-#SFE
-svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/shortcut-fe package/new/shortcut-fe
-svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/fast-classifier package/new/fast-classifier
-
-#回滚zstd
-rm -rf ./feeds/packages/utils/zstd
-svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 
 ##############################
 
@@ -261,8 +259,12 @@ svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-adbyby-plus package/lean/luci-app-adbyby-plus
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/adbyby package/lean/coremark/adbyby
 
-#迅雷快鸟
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-xlnetacc package/lean/luci-app-xlnetacc
+#AutoReboot
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
+
+#ChinaDNS
+# git clone -b luci --single-branch https://github.com/pexcn/openwrt-chinadns-ng package/new/luci-chinadns-ng
+# git clone -b master --single-branch https://github.com/pexcn/openwrt-chinadns-ng package/new/chinadns-ng
 
 #DDNS
 # rm -rf ./feeds/packages/net/ddns-scripts
@@ -272,12 +274,50 @@ svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 # svn co https://github.com/openwrt/packages/branches/openwrt-18.06/net/ddns-scripts feeds/packages/net/ddns-scripts
 # svn co https://github.com/openwrt/luci/branches/openwrt-18.06/applications/luci-app-ddns feeds/luci/applications/luci-app-ddns
 
-#定时重启
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
+#Docker
+# svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
+# svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
+# svn co https://github.com/openwrt/packages/trunk/utils/docker-ce package/utils/docker-ce
+# svn co https://github.com/openwrt/packages/trunk/utils/cgroupfs-mount package/utils/cgroupfs-mount
+# svn co https://github.com/openwrt/packages/trunk/utils/containerd package/utils/containerd
+# svn co https://github.com/openwrt/packages/trunk/utils/libnetwork package/utils/libnetwork
+# svn co https://github.com/openwrt/packages/trunk/utils/tini package/utils/tini
+# svn co https://github.com/openwrt/packages/trunk/utils/runc package/utils/runc
+# rm -rf ./package/lang/golang
+# svn co https://github.com/openwrt/packages/trunk/lang/golang package/lang/golang
 
-#ChinaDNS
-# git clone -b luci --single-branch https://github.com/pexcn/openwrt-chinadns-ng package/new/luci-chinadns-ng
-# git clone -b master --single-branch https://github.com/pexcn/openwrt-chinadns-ng package/new/chinadns-ng
+#Frp
+# rm -f ./feeds/luci/applications/luci-app-frps
+# rm -f ./feeds/luci/applications/luci-app-frpc
+# rm -rf ./feeds/packages/net/frp
+# rm -f ./package/feeds/packages/frp
+# git clone https://github.com/lwz322/luci-app-frps.git package/lean/luci-app-frps
+# git clone https://github.com/kuoruan/luci-app-frpc.git package/lean/luci-app-frpc
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/frp package/feeds/packages/frp
+
+#IPSEC
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-ipsec-vpnd package/lean/luci-app-ipsec-vpnd
+
+#Netdata
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-netdata package/lean/luci-app-netdata
+
+#PASSWALL
+# svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-passwall package/new/luci-app-passwall
+# cp -f ../patches/script/move_2_services.sh ./package/new/luci-app-passwall/move_2_services.sh
+# pushd package/new/luci-app-passwall
+# bash move_2_services.sh
+# popd
+# svn co https://github.com/Lienol/openwrt-package/trunk/package/tcping package/new/tcping
+# svn co https://github.com/Lienol/openwrt-package/trunk/package/trojan-go package/new/trojan-go
+# svn co https://github.com/Lienol/openwrt-package/trunk/package/brook package/new/brook
+# svn co https://github.com/Lienol/openwrt-package/trunk/package/trojan-plus package/new/trojan-plus
+
+#Printer
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-usb-printer package/lean/luci-app-usb-printer
+
+#SeverChan
+# git clone -b master --single-branch https://github.com/tty228/luci-app-serverchan package/new/luci-app-serverchan
+# svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils
 
 #SSRP
 # svn co https://github.com/fw876/helloworld/trunk/luci-app-ssr-plus package/lean/luci-app-ssr-plus
@@ -306,41 +346,8 @@ svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/trojan package/lean/trojan
 # svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/tcpping package/lean/tcpping
 
-#PASSWALL
-# svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-passwall package/new/luci-app-passwall
-# cp -f ../patches/script/move_2_services.sh ./package/new/luci-app-passwall/move_2_services.sh
-# pushd package/new/luci-app-passwall
-# bash move_2_services.sh
-# popd
-# svn co https://github.com/Lienol/openwrt-package/trunk/package/tcping package/new/tcping
-# svn co https://github.com/Lienol/openwrt-package/trunk/package/trojan-go package/new/trojan-go
-# svn co https://github.com/Lienol/openwrt-package/trunk/package/brook package/new/brook
-# svn co https://github.com/Lienol/openwrt-package/trunk/package/trojan-plus package/new/trojan-plus
-
-#打印机
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-usb-printer package/lean/luci-app-usb-printer
-
-#流量监管
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-netdata package/lean/luci-app-netdata
-
-#SeverChan
-# git clone -b master --single-branch https://github.com/tty228/luci-app-serverchan package/new/luci-app-serverchan
-# svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils
-
-#Docker
-# svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
-# svn co https://github.com/lisaac/luci-lib-docker/trunk/collections/luci-lib-docker package/luci-lib-docker
-# svn co https://github.com/openwrt/packages/trunk/utils/docker-ce package/utils/docker-ce
-# svn co https://github.com/openwrt/packages/trunk/utils/cgroupfs-mount package/utils/cgroupfs-mount
-# svn co https://github.com/openwrt/packages/trunk/utils/containerd package/utils/containerd
-# svn co https://github.com/openwrt/packages/trunk/utils/libnetwork package/utils/libnetwork
-# svn co https://github.com/openwrt/packages/trunk/utils/tini package/utils/tini
-# svn co https://github.com/openwrt/packages/trunk/utils/runc package/utils/runc
-# rm -rf ./package/lang/golang
-# svn co https://github.com/openwrt/packages/trunk/lang/golang package/lang/golang
-
-#IPSEC
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-ipsec-vpnd package/lean/luci-app-ipsec-vpnd
+#迅雷快鸟
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-xlnetacc package/lean/luci-app-xlnetacc
 
 #Zerotier
 # svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/luci-app-zerotier package/lean/luci-app-zerotier
@@ -348,15 +355,6 @@ svn co https://github.com/QiuSimons/Others/trunk/zstd feeds/packages/utils/zstd
 # pushd package/lean/luci-app-zerotier
 # bash move_2_services.sh
 # popd
-
-#frp
-# rm -f ./feeds/luci/applications/luci-app-frps
-# rm -f ./feeds/luci/applications/luci-app-frpc
-# rm -rf ./feeds/packages/net/frp
-# rm -f ./package/feeds/packages/frp
-# git clone https://github.com/lwz322/luci-app-frps.git package/lean/luci-app-frps
-# git clone https://github.com/kuoruan/luci-app-frpc.git package/lean/luci-app-frpc
-# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/frp package/feeds/packages/frp
 
 ##############################
 
