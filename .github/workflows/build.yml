@@ -106,7 +106,6 @@ jobs:
         if: env.SSH_ACTIONS == 'true'
         uses: P3TERX/debugger-action@master
 
-
       - name: Make Download
         run: |
           cd openwrt
