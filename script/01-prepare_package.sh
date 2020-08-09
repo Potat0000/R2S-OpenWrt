@@ -125,8 +125,14 @@ cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-
 
 #Additional package
 
+#AdGuard
+git clone -b master --single-branch https://github.com/rufengsuixing/luci-app-adguardhome package/new/luci-app-adguardhome
+mkdir -p package/new/luci-app-adguardhome/root/usr/share/rpcd/acl.d/
+echo '{\n        "luci-app-adguardhome": {\n                "description": "Grant UCI access for luci-app-adguardhome",\n                "read": {\n                        "uci": [ "AdGuardHome" ]\n                },\n                "write": {\n                        "uci": [ "AdGuardHome" ]\n                }\n        }\n}\n' > package/new/luci-app-adguardhome/root/usr/share/rpcd/acl.d/luci-app-adguardhome.json
+chmod 755 package/new/luci-app-adguardhome/root/usr/share/rpcd/acl.d/luci-app-adguardhome.json
+
 #Argon theme
-git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
+git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon package/new/luci-theme-argon
 
 #AutoCore
 svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/autocore package/lean/autocore
@@ -151,14 +157,15 @@ patch -p1 < ../patches/luci-app-freq.patch
 #iputils (Some important network tools)
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils
 
+#KMS
+git clone https://github.com/cokebar/openwrt-vlmcsd package/cokebar/openwrt-vlmcsd
+git clone https://github.com/cokebar/luci-app-vlmcsd package/cokebar/luci-app-vlmcsd
+
 #OLED display
 git clone https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
 
 #OpenClash
-git clone -b master --single-branch https://github.com/vernesong/OpenClash.git OpenClash
-mkdir -p package/vernesong
-mv OpenClash/luci-app-openclash package/vernesong/luci-app-openclash
-rm -rf OpenClash
+svn co https://github.com/vernesong/OpenClash/branches/master/luci-app-openclash package/vernesong/luci-app-openclash
 mkdir -p package/base-files/files/etc/openclash/core
 cd package/base-files/files/etc/openclash/core
 curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
@@ -175,14 +182,14 @@ sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/utils/syncthing/Makefile
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" feeds/packages/utils/syncthing/Makefile
 sed -i 's,/etc/syncthing,/etc/syncthing/cert.pem\n/etc/syncthing/config.xml\n/etc/syncthing/https-cert.pem\n/etc/syncthing/https-key.pem\n/etc/syncthing/key.pem,g' feeds/packages/utils/syncthing/Makefile
 
+#UnblockNeteaseMusic
+git clone https://github.com/project-openwrt/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic
+
 #Wrtbwmon (Traffic monitoring)
 git clone -b master --single-branch https://github.com/brvphoenix/wrtbwmon package/new/wrtbwmon
 git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbwmon package/new/luci-app-wrtbwmon
 
 ##############################
-
-#AdGuard
-# git clone -b master --single-branch https://github.com/rufengsuixing/luci-app-adguardhome package/new/luci-app-adguardhome
 
 #Arpbind
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
@@ -191,7 +198,7 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
 
 #Dockerman
-# git clone https://github.com/lisaac/luci-app-dockerman.git package/lean/luci-app-dockerman
+# git clone https://github.com/lisaac/luci-app-dockerman package/lean/luci-app-dockerman
 # git clone https://github.com/lisaac/luci-lib-docker package/lean/luci-lib-docker
 # svn co https://github.com/openwrt/packages/trunk/utils/docker-ce package/lean/docker-ce
 # svn co https://github.com/openwrt/packages/trunk/utils/cgroupfs-mount package/lean/cgroupfs-mount
@@ -213,7 +220,7 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 
 #Passwall
 # svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-passwall package/lienol/luci-app-passwall
-# git clone -b master --single-branch https://github.com/xnxy2012/luci-app-passwall.git package/lienol/luci-app-passwall
+# git clone -b master --single-branch https://github.com/xnxy2012/luci-app-passwall package/lienol/luci-app-passwall
 #Passwall Depends
 # svn co https://github.com/Lienol/openwrt-package/trunk/package/chinadns-ng package/lienol/chinadns-ng
 # svn co https://github.com/Lienol/openwrt-package/trunk/package/tcping package/lienol/tcping
