@@ -125,20 +125,15 @@ cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-
 
 #Additional package
 
-#AppFilter
-git clone -b master --single-branch https://github.com/destan19/OpenAppFilter package/new/OpenAppFilter
-
 #Argon theme
 git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
-
-#Arpbind
-svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
 
 #AutoCore
 svn co https://github.com/project-openwrt/openwrt/branches/master/package/lean/autocore package/lean/autocore
 
 #Beardropper
 git clone https://github.com/NateLol/luci-app-beardropper package/luci-app-beardropper
+
 #Collectd
 sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/collectd/Makefile
 
@@ -158,9 +153,6 @@ svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network
 
 #OLED display
 git clone https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
-
-#Onliner
-svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/luci-app-onliner package/ctcgfw/luci-app-onliner
 
 #OpenClash
 git clone -b master --single-branch https://github.com/vernesong/OpenClash.git OpenClash
@@ -192,6 +184,9 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 #AdGuard
 # git clone -b master --single-branch https://github.com/rufengsuixing/luci-app-adguardhome package/new/luci-app-adguardhome
 
+#Arpbind
+# svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
+
 #AutoReboot
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-autoreboot package/lean/luci-app-autoreboot
 
@@ -209,6 +204,12 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 #FileTransfer
 # svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/lean/luci-app-filetransfer package/lean/luci-app-filetransfer
 # svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/lean/luci-lib-fs package/lean/luci-lib-fs
+
+#Onliner
+# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/luci-app-onliner package/ctcgfw/luci-app-onliner
+
+#OpenAppFilter
+# git clone -b master --single-branch https://github.com/destan19/OpenAppFilter package/new/OpenAppFilter
 
 #Passwall
 # svn co https://github.com/Lienol/openwrt-package/trunk/lienol/luci-app-passwall package/lienol/luci-app-passwall
@@ -251,15 +252,6 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 # svn co https://github.com/coolsnowwolf/packages/trunk/net/shadowsocks-libev package/lean/shadowsocks-libev
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/trojan package/lean/trojan
 # svn co https://github.com/project-openwrt/openwrt/trunk/package/lean/tcpping package/lean/tcpping
-
-#SubConverter
-# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/subconverter package/new/subconverter
-# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/jpcre2 package/new/jpcre2
-# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/rapidjson package/new/rapidjson
-
-#Tmate (A terminal)
-# svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/tmate package/ctcgfw/tmate
-# svn co https://github.com/project-openwrt/openwrt/branches/openwrt-19.07/package/ctcgfw/msgpack-c package/ctcgfw/msgpack-c
 
 #Transmission (BT)
 # rm -rf ./feeds/packages/net/transmission*
