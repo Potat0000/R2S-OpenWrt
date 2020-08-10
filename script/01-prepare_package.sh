@@ -157,7 +157,7 @@ patch -p1 < ../patches/luci-app-freq.patch
 svn co https://github.com/openwrt/openwrt/branches/openwrt-19.07/package/network/utils/iputils package/network/utils/iputils
 
 #OLED display
-git clone https://github.com/gyj1109/luci-app-oled package/natelol/luci-app-oled
+git clone https://github.com/natelol/luci-app-oled package/natelol/luci-app-oled
 
 #OpenClash
 svn co https://github.com/vernesong/OpenClash/branches/master/luci-app-openclash package/vernesong/luci-app-openclash
