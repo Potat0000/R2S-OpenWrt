@@ -125,11 +125,6 @@ cp ../script/zzz-default-settings package/lean/lean-translate/files/zzz-default-
 
 #Additional package
 
-#AriaNg
-sed sed -i "s/PKG_VERSION:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
-sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
-sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | jq ".tag_name" | sed -E 's/^.*"([^"]+)".*$/\1/')/g" feeds/packages/net/ariang/Makefile
-
 #Argon theme
 git clone -b master --single-branch https://github.com/jerrykuku/luci-theme-argon package/new/luci-theme-argon
 
@@ -188,6 +183,11 @@ git clone -b master --single-branch https://github.com/brvphoenix/luci-app-wrtbw
 
 #AdGuard Home
 # git clone -b master --single-branch https://github.com/rufengsuixing/luci-app-adguardhome package/new/luci-app-adguardhome
+
+#AriaNg
+# sed sed -i "s/PKG_VERSION:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
+# sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
+# sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | jq ".tag_name" | sed -E 's/^.*"([^"]+)".*$/\1/')/g" feeds/packages/net/ariang/Makefile
 
 #Arpbind
 # svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-arpbind package/lean/luci-app-arpbind
