@@ -117,6 +117,8 @@ jobs:
           mkdir -p ./artifact/
           mv openwrt/bin/targets/*/*/*squashfs-sysupgrade.img* ./artifact/
           cd ./artifact/
+          sha256sum openwrt* | tee sha256_${{ steps.set_time.outputs.build_time }}.hash
+          md5sum openwrt* | tee md5_${{ steps.set_time.outputs.build_time }}.hash
           gzip -d *.gz && exit 0
           gzip *.img
           cd ../openwrt
