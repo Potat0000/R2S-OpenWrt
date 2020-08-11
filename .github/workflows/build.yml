@@ -36,58 +36,66 @@ jobs:
             echo "##[set-output name=username;]`echo $GITHUB_REPOSITORY | cut -d / -f 2`"
           fi
 
-      - name: Free Disk Space
-        run: |
-          df -h
-          sudo swapoff -a
-          sudo rm -f /swapfile
-          sudo apt clean
-          docker rmi $(docker image ls -aq)
-          df -h
-          /bin/bash ./script/free_disk_space.sh
-
       - name: Initialization Environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo rm -rf /etc/apt/sources.list.d
-          sudo apt-get -y purge dotnet* ghc* google* llvm* mysql* php* zulu* firefox hhvm
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk
-          sudo apt-get update
-          sudo apt-get -y --no-install-recommends install build-essential asciidoc binutils bison bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python3 jq
-          curl https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh  | sed '/#/d' | sed 's/\\//g' | sed 's/exit 0//g' | sed 's/sudo apt -y install//g' | sed 's/sudo apt-get -y install//g' | sed 's/:i386//g' | xargs sudo apt-get -y --no-install-recommends install
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk
+          docker rmi $(docker images -q)
+          sudo -E apt-get remove -y --purge azure-cli ghc zulu* hhvm llvm* firefox google* dotnet* powershell mysql* php* mssql-tools msodbcsql17 android*
+          sudo -E apt-get update -y
+          sudo -E apt-get full-upgrade -y
+          sudo -E apt-get install -y build-essential asciidoc binutils bzip2 coreutils gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-8 gcc++-8 gcc-8-multilib g++-8-multilib p7zip p7zip-full msmtp libssl-dev texinfo libreadline-dev libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint ccache curl wget vim nano python python3 python-pip python3-pip python-ply python3-ply haveged lrzsz device-tree-compiler scons antlr3 gperf ecj fastjar re2c xz-utils tar jq
+          for i in $(ls /usr/bin/*-8); do sudo -E ln -sf $i ${i%%-8*}; done
+          sudo -E ln -sf /usr/include/asm-generic /usr/include/asm
+          sudo -E apt-get autoremove -y --purge
+          sudo -E apt-get clean -y
+          sudo -E swapoff -a
+          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android /opt/ghc /swapfile
           git config --global user.name "Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Install OpenWrt Source
+      - name: Clone Source
         run: |
-          git clone https://github.com/openwrt/openwrt.git
+          git clone --branch master --single-branch https://github.com/project-openwrt/openwrt openwrt
+          sudo chown -R runner:runner openwrt
           cd openwrt
-          git reset --hard 5d8fded26aad230f9a87e55dd20fa778d9ea95d5
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          patch -p1 < ../patches/snapshot-modify_for_r2s.patch
 
-      - name: Prepare OpenWrt Package
+      - name: Additional Step
         run: |
           cd openwrt
-          cp -r ../script/0* ./
-          /bin/bash 01-prepare_package.sh
+          cp -f ../patches/999-unlock-1608mhz-rk3328.patch ./target/linux/rockchip/patches-5.4/999-unlock-1608mhz-rk3328.patch
+          rm -f ./target/linux/rockchip/patches-5.4/004-unlock-1512mhz-rk3328.patch
+          sed -i 's/Os/O3/g' include/target.mk
+          sed -i 's/O2/O3/g' ./rules.mk
+          sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 
-      - name: Convert Translation
-        run: |
-          cd openwrt
-          /bin/bash 02-convert_translation.sh
+          sed -i "s/PKG_VERSION:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
+          sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
+          sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | jq ".tag_name" | sed -E 's/^.*"([^"]+)".*$/\1/')/g" feeds/packages/net/ariang/Makefile
 
-      - name: Remove Upx
-        run: |
-          cd openwrt
-          /bin/bash 03-remove_upx.sh
+          sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/collectd/Makefile
+
+          sed -i 's,-DMULTIT,-Ofast -DMULTIT,g' package/lean/coremark/Makefile
+          sed -i '9,$d' package/lean/coremark/coremark.sh
+
+          git clone https://github.com/gyj1109/luci-app-syncthing package/gyj1109/luci-app-syncthing
+          sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/utils/syncthing/Makefile
+          sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" feeds/packages/utils/syncthing/Makefile
+          sed -i 's,/etc/syncthing,/etc/syncthing/cert.pem\n/etc/syncthing/config.xml\n/etc/syncthing/https-cert.pem\n/etc/syncthing/https-key.pem\n/etc/syncthing/key.pem,g' feeds/packages/utils/syncthing/Makefile
+
+          mkdir -p package/base-files/files/etc/openclash/core
+          cd package/base-files/files/etc/openclash/core
+          curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
+          chmod +x clash
+          cd ../../../../../..
 
       - name: Load Config
         run: |
           cd openwrt
           mv ../origin.seed .config
-          make defconfig
-          chmod -R 755 ./
 
       - name: Set Build Time
         id: set_time
@@ -95,32 +103,34 @@ jobs:
           build_time=$(date +%Y-%m-%dT%H-%M)
           echo -e "\033[32m\033[1m$build_time\033[0m"
           echo "##[set-output name=build_time;]$build_time"
-          sed -i s/BUILDVERSION/$build_time/g openwrt/package/lean/lean-translate/files/zzz-default-settings
 
       - name: Setup Debug Session
         if: env.SSH_ACTIONS == 'true'
         uses: P3TERX/debugger-action@master
 
-      - name: Make Toolchain
-        run: |
-          cd openwrt
-          let make_process=$(nproc)+1
-          make toolchain/install -j${make_process} V=s
-
-      - name: Compile OpenWrt
-        run: |
-          cd openwrt
-          let make_process=$(nproc)+1
-          make -j${make_process} V=s || make -j${make_process} V=s
-
-      - name: Organize Files
+      - name: Make
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
-          mv openwrt/bin/targets/*/*/*squashfs-sysupgrade.img* ./artifact/
+          cd openwrt
+          make defconfig
+          make -j$[$(nproc)+1]
+          mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+          mv -f bin/targets/rockchip/armv8/sha256sums ../artifact/openwrt-snapshot-sha256sums
+
+      - name: Rebuild to Collect Error Log
+        if: failure()
+        run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          cd openwrt
+          make -j1 V=s
+          mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+          mv -f bin/targets/rockchip/armv8/sha256sums ../artifact/openwrt-snapshot-sha256sums
+
+      - name: Organize Files
+        run: |
           cd ./artifact/
-          sha256sum openwrt* | tee sha256_${{ steps.set_time.outputs.build_time }}.hash
-          md5sum openwrt* | tee md5_${{ steps.set_time.outputs.build_time }}.hash
           gzip -d *.gz && exit 0
           gzip *.img
           cd ../openwrt
