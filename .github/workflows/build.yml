@@ -64,7 +64,7 @@ jobs:
         run: |
           git clone https://github.com/openwrt/openwrt.git
           cd openwrt
-          git revert e27fbae63c3436ce5588ca06b78ea88c7a316fee
+          git reset --hard 5d8fded26aad230f9a87e55dd20fa778d9ea95d5
 
       - name: Prepare OpenWrt Package
         run: |
