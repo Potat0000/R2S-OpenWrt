@@ -28,18 +28,18 @@ index 0e7eaede33..f7128226f7 100644
  	option factor '10'
 
 diff --git a/package/lean/luci-app-turboacc/Makefile b/package/lean/luci-app-turboacc/Makefile
-index 652b4d4615..87f1e550cd 100644
+index dfd78c845c..deb85f9246 100644
 --- a/package/lean/luci-app-turboacc/Makefile
 +++ b/package/lean/luci-app-turboacc/Makefile
 @@ -22,7 +22,7 @@ LUCI_PKGARCH:=all
  define Package/$(PKG_NAME)/config
- config PACKAGE_$(PKG_NAME)_INCLUDE_shortcut-fe
- 	bool "Include Shortcut-FE"
--	depends on PACKAGE_$(PKG_NAME)_INCLUDE_flow-offload=n
-+	#depends on PACKAGE_$(PKG_NAME)_INCLUDE_flow-offload=n
- 	default n
-
  config PACKAGE_$(PKG_NAME)_INCLUDE_flow-offload
+ 	bool "Include Flow Offload"
+-	depends on PACKAGE_$(PKG_NAME)_INCLUDE_shortcut-fe=n
++	#depends on PACKAGE_$(PKG_NAME)_INCLUDE_shortcut-fe=n
+ 	default y
+
+ config PACKAGE_$(PKG_NAME)_INCLUDE_shortcut-fe
 diff --git a/package/lean/luci-app-turboacc/root/etc/config/turboacc b/package/lean/luci-app-turboacc/root/etc/config/turboacc
 index 067aad2763..cf30d7359d 100644
 --- a/package/lean/luci-app-turboacc/root/etc/config/turboacc
