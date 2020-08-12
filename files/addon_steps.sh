@@ -12,13 +12,6 @@ sed -i 's/TARGET_x86_64/TARGET_x86_64||TARGET_rockchip/g' feeds/packages/utils/c
 sed -i 's,-DMULTIT,-Ofast -DMULTIT,g' package/lean/coremark/Makefile
 sed -i '9,$d' package/lean/coremark/coremark.sh
 
-find package -name "*syncthing*" | xargs rm -rf
-svn co https://github.com/openwrt/packages/trunk/utils/syncthing package/utils/syncthing
-git clone https://github.com/gyj1109/luci-app-syncthing package/gyj1109/luci-app-syncthing
-sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/utils/syncthing/Makefile
-sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/syncthing/syncthing/releases/latest" | jq ".tag_name" | sed -E 's/^.*"v([^"]+)".*$/\1/')/g" feeds/packages/utils/syncthing/Makefile
-sed -i 's,/etc/syncthing,/etc/syncthing/cert.pem\n/etc/syncthing/config.xml\n/etc/syncthing/https-cert.pem\n/etc/syncthing/https-key.pem\n/etc/syncthing/key.pem,g' feeds/packages/utils/syncthing/Makefile
-
 mkdir -p package/base-files/files/etc/openclash/core
 cd package/base-files/files/etc/openclash/core
 curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
