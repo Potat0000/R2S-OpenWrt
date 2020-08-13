@@ -93,7 +93,6 @@ jobs:
           make defconfig
           make -j$[$(nproc)+1]
           mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
-          mv -f bin/targets/rockchip/armv8/sha256sums ../artifact/openwrt-snapshot-sha256sums
 
       - name: Rebuild to Collect Error Log
         if: failure()
@@ -103,17 +102,19 @@ jobs:
           cd openwrt
           make -j1 V=s
           mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
-          mv -f bin/targets/rockchip/armv8/sha256sums ../artifact/openwrt-snapshot-sha256sums
 
       - name: Organize Files
         run: |
-          cd ./artifact/
-          gzip -d *.gz && exit 0
-          gzip *.img
-          cd ../openwrt
+          cd openwrt
           cp .config ../artifact/config.seed
           ./scripts/diffconfig.sh > ../artifact/config.slim.seed
-          cd ../artifact
+          cd ../artifact/
+          gzip -d *.gz && exit 0
+          echo -e "MD5:    \c" > checksums
+          md5sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
+          echo -e "SHA256: \c" >> checksums
+          sha256sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
+          gzip *.img
           zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
 
       - name: Upload Artifact

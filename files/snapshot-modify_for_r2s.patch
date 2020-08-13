@@ -23,7 +23,7 @@ index 0e7eaede33..f7128226f7 100644
 -	option maxfreq ''
 +	option governor 'schedutil'
 +	option minfreq '816000'
-+	option maxfreq '1512000'
++	option maxfreq '1608000'
  	option upthreshold '50'
  	option factor '10'
 
