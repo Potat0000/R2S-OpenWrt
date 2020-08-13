@@ -1,5 +1,3 @@
-cp -f ../files/999-unlock-1608mhz-rk3328.patch ./target/linux/rockchip/patches-5.4/999-unlock-1608mhz-rk3328.patch
-rm -f ./target/linux/rockchip/patches-5.4/004-unlock-1512mhz-rk3328.patch
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
