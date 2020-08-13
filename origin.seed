@@ -404,6 +404,7 @@ CONFIG_VSFTPD_USE_UCI_SCRIPTS=y
 # CONFIG_PACKAGE_ip-tiny is not set
 # CONFIG_v2ray-plugin_INCLUDE_GOPROXY is not set
 
+CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-aria2=y
 CONFIG_PACKAGE_luci-app-arpbind=y
 CONFIG_PACKAGE_luci-app-cpufreq=y
