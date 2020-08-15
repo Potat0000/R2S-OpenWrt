@@ -16,6 +16,7 @@ https://github.com/gyj1109/R2S-OpenWrt/releases
 ### 管理后台
 
 - 地址：192.168.1.1
+- 默认密码：password
 
 ### Fork方法
 
