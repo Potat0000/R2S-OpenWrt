@@ -116,7 +116,9 @@ jobs:
           echo -e "SHA256: \c" >> checksums
           sha256sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
           gzip *.img
+          cp checksums ../body.md
           zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
+          sed -i '1iBuilt at ${{ steps.set_time.outputs.build_time }}' ../body.md
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
@@ -129,7 +131,7 @@ jobs:
         with:
           allowUpdates: true
           artifacts: "OpenWrt-R2S-${{ steps.set_name.outputs.username }}-*-ROM.zip,artifact/config.seed"
-          body: Built at ${{ steps.set_time.outputs.build_time }}
+          bodyFile: "body.md"
           commit: ${{ github.sha }}
           name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
           tag: ${{ steps.set_time.outputs.build_time }}
