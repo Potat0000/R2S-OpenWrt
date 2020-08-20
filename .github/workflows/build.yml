@@ -11,11 +11,14 @@ on:
   push:
     branches:
       - master
-  watch:
-    types: started
+  workflow_dispatch:
+    inputs:
+      SSH_ACTIONS:
+        description: 'Needs to create a ssh debug session?'
+        required: false
+        default: 'false'
 
 env:
-  SSH_ACTIONS: false
   TZ: Asia/Shanghai
 
 jobs:
@@ -83,7 +86,7 @@ jobs:
           sed -i s/BUILDVERSION/$build_time/g openwrt/package/lean/default-settings/files/zzz-default-settings
 
       - name: Setup Debug Session
-        if: env.SSH_ACTIONS == 'true'
+        if: github.event.inputs.SSH_ACTIONS == 'true'
         uses: P3TERX/debugger-action@master
 
       - name: Make
