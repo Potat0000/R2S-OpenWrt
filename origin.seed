@@ -153,7 +153,6 @@ CONFIG_PACKAGE_kmod-crypto-md5=y
 CONFIG_PACKAGE_kmod-crypto-michael-mic=y
 CONFIG_PACKAGE_kmod-crypto-misc=y
 CONFIG_PACKAGE_kmod-crypto-pcbc=y
-CONFIG_PACKAGE_kmod-crypto-rk3328=y
 CONFIG_PACKAGE_kmod-crypto-rmd160=y
 CONFIG_PACKAGE_kmod-crypto-rng=y
 CONFIG_PACKAGE_kmod-crypto-seqiv=y
