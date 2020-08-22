@@ -1,8 +1,4 @@
-cd package/lean/default-settings/files
-sed -i "s/DISTRIB_REVISION=''/DISTRIB_REVISION='BUILDVERSION'/g" zzz-default-settings
-sed -i "s/DISTRIB_DESCRIPTION='OpenWrt Snapshot | Mod20.08 By CTCGFW'/DISTRIB_DESCRIPTION='Gyj1109 Build @ BUILDVERSION'/g" zzz-default-settings
-sed -i 's/luciversion = "Mod20.08 by CTCGFW"/luciversion = "BUILDVERSION"/g' zzz-default-settings
-cd ../../../..
+sed -i "s/DISTRIB_DESCRIPTION='OpenWrt Snapshot | Mod20.08 By CTCGFW'/DISTRIB_DESCRIPTION='OpenWrt Snapshot | Mod20.08 By CTCGFW | Gyj1109 Build @ BUILDVERSION'/g" package/lean/default-settings/files/zzz-default-settings
 
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
