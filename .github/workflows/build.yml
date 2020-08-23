@@ -59,12 +59,12 @@ jobs:
 
       - name: Clone Source
         run: |
-          git clone --branch master --single-branch https://github.com/project-openwrt/openwrt openwrt
+          git clone --branch openwrt-18.06-k5.4 --single-branch https://github.com/project-openwrt/openwrt openwrt
           sudo chown -R runner:runner openwrt
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-          patch -p1 < ../files/snapshot-modify_for_r2s.patch
+          patch -p1 < ../files/modify_for_r2s.patch
 
       - name: Additional Step
         run: |

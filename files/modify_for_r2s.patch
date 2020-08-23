@@ -1,8 +1,8 @@
 diff --git a/package/lean/default-settings/files/zzz-default-settings b/package/lean/default-settings/files/zzz-default-settings
-index 6fc1d2471c..e18e0c06d0 100755
+index 9e07978e0..67a2fc081 100755
 --- a/package/lean/default-settings/files/zzz-default-settings
 +++ b/package/lean/default-settings/files/zzz-default-settings
-@@ -51,6 +51,8 @@ echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
+@@ -63,6 +63,8 @@ echo 'hsts=0' > /root/.wgetrc
  rm -rf /tmp/luci-modulecache/
  rm -f /tmp/luci-indexcache
 
@@ -12,7 +12,7 @@ index 6fc1d2471c..e18e0c06d0 100755
 
  exit 0
 diff --git a/package/lean/luci-app-cpufreq/root/etc/config/cpufreq b/package/lean/luci-app-cpufreq/root/etc/config/cpufreq
-index 0e7eaede33..f7128226f7 100644
+index 0e7eaede33..63908d1d53 100644
 --- a/package/lean/luci-app-cpufreq/root/etc/config/cpufreq
 +++ b/package/lean/luci-app-cpufreq/root/etc/config/cpufreq
 @@ -1,8 +1,8 @@
