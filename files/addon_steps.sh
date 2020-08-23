@@ -1,11 +1,11 @@
-sed -i 's/luciversion = "Mod20.08 by CTCGFW"/luciversion = "Gyj1109 Build @ BUILDVERSION"/g' package/lean/default-settings/files/zzz-default-settings
+cd package/lean/default-settings/files
+sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_DESCRIPTION='\1 | Build by BUILDUSER'/g" zzz-default-settings
+sed -i 's/luciversion = "[^"]*"/luciversion = "BUILDVERSION"/g' zzz-default-settings
+cd ../../../..
 
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
-
-rm -rf package/ctcgfw/luci-app-unblockneteasemusic
-svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/luci-app-unblockmusic package/ctcgfw/luci-app-unblockmusic
 
 sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | jq ".tag_name" | sed -E 's/^.*"([^"]+)".*$/\1/')/g" feeds/packages/net/ariang/Makefile
