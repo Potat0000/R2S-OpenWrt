@@ -1,11 +1,16 @@
-cd package/lean/default-settings/files
-sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_DESCRIPTION='\1 | Build by BUILDUSER'/g" zzz-default-settings
-sed -i 's/luciversion = "[^"]*"/luciversion = "BUILDVERSION"/g' zzz-default-settings
-cd ../../../..
+sudo -E apt-get -y install jq
+
+sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_REVISION='\1 | Build by BUILDUSER @ BUILDTIME'/g" package/lean/default-settings/files/zzz-default-settings
 
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
+
+cd package/ctcgfw/luci-theme-argonv3/luasrc/view/themes/argon
+a=`sed -n '/^.*"ftc".*$/=' footer.htm`
+b=`sed -n '/^.*distversion.*$/=' footer.htm`
+sed -i "$[a+1],$[b]d" footer.htm
+cd ../../../../../../..
 
 sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
 sed -i "s/PKG_VERSION:=.*/PKG_VERSION:=$(curl --silent "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | jq ".tag_name" | sed -E 's/^.*"([^"]+)".*$/\1/')/g" feeds/packages/net/ariang/Makefile

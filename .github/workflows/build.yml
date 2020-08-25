@@ -1,143 +1,216 @@
 #=================================================
-# Description: Build OpenWrt using GitHub Actions
+# https://github.com/tete1030/openwrt-fastbuild-actions
+# Description: FAST building OpenWrt with Github Actions and Docker!
 # Lisence: MIT
-# Author: Mod from P3TERX
-# For NanoPi R2S org
+# Author: Texot
 #=================================================
+
+env:
+  TZ: Asia/Shanghai
+  # DO NOT CHANGE the following here, set them only in forked repo's Settings->Secrets page
+  # You don't need to set docker_registry if you are using the default Docker Hub
+  DK_REGISTRY: ${{secrets.DOCKER_REGISTRY}}
+  DK_USERNAME: ${{secrets.DOCKER_USERNAME}}
+  DK_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+  TMATE_ENCRYPT_PASSWORD: ${{secrets.TMATE_ENCRYPT_PASSWORD}}
 
 name: OpenWrt R2S
 
 on:
+  deployment:
+  repository_dispatch:
   push:
     branches:
       - master
-  workflow_dispatch:
-    inputs:
-      SSH_ACTIONS:
-        description: 'Needs to create a ssh debug session?'
-        required: false
-        default: 'false'
-
-env:
-  TZ: Asia/Shanghai
+  #   paths:
+  #   - 'user/**'
+  # # For 'schedule', see examples in: https://crontab.guru/examples.html
+  # #     e.g. every sunday midnight: '0 0 * * 0' every midnight: '0 0 * * *'
+  # schedule:
+  #   - cron: '0 0 * * 0'
+  # watch:
+  #   types: [started]
 
 jobs:
-    build:
-      runs-on: ubuntu-18.04
-      if: github.event.repository.owner.id == github.event.sender.id
+  build:
+    runs-on: ubuntu-18.04
+    # For `github.event`'s structure, see: https://developer.github.com/v3/activity/events/types/
+    # Do not modify the trigger methods here, customize them in the `on` section
+    if: |
+      github.event_name == 'push'
+      || github.event_name == 'repository_dispatch'
+      || github.event_name == 'deployment'
+      || (github.event_name == 'watch' && github.event.action == 'started' && github.event.repository.owner.id == github.event.sender.id)
+      || github.event_name == 'schedule'
+    name: ${{matrix.title}} ${{matrix.target}}
+    strategy:
+      fail-fast: false
+      matrix:
+        mode:
+          - normal
+          - test
+        target: [1806]
+        include:
+        - mode: normal
+          title: Build
+        - mode: test
+          title: Fast check
+    env:
+      HOST_WORK_DIR: ${{github.workspace}}
+      BUILD_MODE: ${{matrix.mode}}
+      BUILD_TARGET: ${{matrix.target}}
 
-      steps:
-      - name: Checkout
-        uses: actions/checkout@main
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
-      - name: Set Username
-        id: set_name
-        run: |
-          if [ "$GITHUB_ACTOR" = "gyj1109" ];then
-            echo "##[set-output name=username;]Gyj1109"
-          else
-            echo "##[set-output name=username;]`echo $GITHUB_REPOSITORY | cut -d / -f 2`"
-          fi
+    - name: Init build env
+      run: scripts/cisteps/build-openwrt/01-init_env.sh
 
-      - name: Initialization Environment
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          docker rmi $(docker images -q)
-          sudo -E apt-get remove -y --purge azure-cli ghc zulu* hhvm llvm* firefox google* dotnet* powershell mysql* php* mssql-tools msodbcsql17 android*
-          sudo -E apt-get update -y
-          sudo -E apt-get full-upgrade -y
-          sudo -E apt-get install -y build-essential asciidoc binutils bzip2 coreutils gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-8 gcc++-8 gcc-8-multilib g++-8-multilib p7zip p7zip-full msmtp libssl-dev texinfo libreadline-dev libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint ccache curl wget vim nano python python3 python-pip python3-pip python-ply python3-ply haveged lrzsz device-tree-compiler scons antlr3 gperf ecj fastjar re2c xz-utils tar jq
-          for i in $(ls /usr/bin/*-8); do sudo -E ln -sf $i ${i%%-8*}; done
-          sudo -E ln -sf /usr/include/asm-generic /usr/include/asm
-          sudo -E apt-get autoremove -y --purge
-          sudo -E apt-get clean -y
-          sudo -E swapoff -a
-          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android /opt/ghc /swapfile
-          git config --global user.name "Actions"
-          git config --global user.email "actions@github.com"
+    - name: Check if skip this job
+      run: scripts/cisteps/build-openwrt/02-check_target.sh
 
-      - name: Clone Source
-        run: |
-          git clone --branch openwrt-18.06-k5.4 --single-branch https://github.com/project-openwrt/openwrt openwrt
-          sudo chown -R runner:runner openwrt
-          cd openwrt
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-          patch -p1 < ../files/modify_for_r2s.patch
+    - name: Clean up for extra space
+      if: env.SKIP_TARGET == '0' && env.TEST != '1'
+      run: scripts/cisteps/build-openwrt/03-clean_up.sh
 
-      - name: Additional Step
-        run: |
-          cd openwrt
-          mv ../files/addon_steps.sh .
-          bash addon_steps.sh
+    - name: Set Build Info
+      id: set_info
+      if: env.SKIP_TARGET == '0'
+      run: |
+        if [ "$GITHUB_ACTOR" = "gyj1109" ];then
+          builduser=Gyj1109
+        else
+          builduser=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
+        fi
+        buildtime=$(date +%Y-%m-%dT%H-%M)
+        sed -i s/BUILDTIME/$buildtime/g user/current/custom.sh
+        sed -i s/BUILDUSER/$builduser/g user/current/custom.sh
+        sed -i s/BUILDTIME/$buildtime/g scripts/cisteps/build-openwrt/14-organize_files.sh
+        sed -i s/BUILDUSER/$builduser/g scripts/cisteps/build-openwrt/14-organize_files.sh
+        echo "##[set-output name=buildtime;]$buildtime"
+        echo "##[set-output name=builduser;]$builduser"
+        echo -e "\033[32m\033[1m$buildtime\033[0m"
 
-      - name: Load Config
-        run: |
-          cd openwrt
-          mv ../origin.seed .config
+    - name: Set up Docker Buildx
+      id: buildx
+      if: env.SKIP_TARGET == '0'
+      uses: crazy-max/ghaction-docker-buildx@v3.3.0
+      with:
+        buildx-version: latest
 
-      - name: Set Build Time
-        id: set_time
-        run: |
-          build_time=$(date +%Y-%m-%dT%H-%M)
-          sed -i s/BUILDVERSION/$build_time/g openwrt/package/lean/default-settings/files/zzz-default-settings
-          sed -i s/BUILDUSER/${{ steps.set_name.outputs.username }}/g openwrt/package/lean/default-settings/files/zzz-default-settings
-          echo -e "\033[32m\033[1m$build_time\033[0m"
-          echo "##[set-output name=build_time;]$build_time"
+    - name: Configure docker
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/04-configure_docker.sh
 
-      - name: Setup Debug Session
-        if: github.event.inputs.SSH_ACTIONS == 'true'
-        uses: P3TERX/debugger-action@master
+    - name: Check status of builders
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/05-check_builders.sh
 
-      - name: Make
-        run: |
-          rm -rf ./artifact/
-          mkdir -p ./artifact/
-          cd openwrt
-          make defconfig
-          make -j$[$(nproc)+1]
-          mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+    - name: '[Debug] Wait for SSH connection (timeout 5min)'
+      if: env.SKIP_TARGET == '0' && env.OPT_DEBUG == '1' && env.TEST != '1'
+      env:
+        TIMEOUT_MIN: 5
+      uses: tete1030/safe-debugger-action@dev
 
-      - name: Rebuild to Collect Error Log
-        if: failure()
-        run: |
-          rm -rf ./artifact/
-          mkdir -p ./artifact/
-          cd openwrt
-          make -j1 V=s
-          mv -f bin/targets/rockchip/armv8/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz ../artifact/openwrt-snapshot-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz
+    - name: Get builder
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/06-get_builder.sh
 
-      - name: Organize Files
-        run: |
-          cd openwrt
-          cp .config ../artifact/config.seed
-          ./scripts/diffconfig.sh > ../artifact/config.slim.seed
-          cd ../artifact/
-          gzip -d *.gz && exit 0
-          echo -e "MD5:    \c" > checksums
-          md5sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
-          echo -e "SHA256: \c" >> checksums
-          sha256sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
-          gzip *.img
-          cp checksums ../body.md
-          zip ../OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}-ROM.zip *
-          sed -i 's/:\ \+/:\t/g' ../body.md
-          sed -i '1iBuilt at ${{ steps.set_time.outputs.build_time }}' ../body.md
+    - name: Clone/update OpenWrt
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/07-download_openwrt.sh
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
-          path: ./artifact/
+    - name: Apply customizations
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/08-customize.sh
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: "OpenWrt-R2S-${{ steps.set_name.outputs.username }}-*-ROM.zip,artifact/config.seed"
-          bodyFile: "body.md"
-          commit: ${{ github.sha }}
-          name: OpenWrt-R2S-${{ steps.set_name.outputs.username }}-${{ steps.set_time.outputs.build_time }}
-          tag: ${{ steps.set_time.outputs.build_time }}
-          token: ${{ secrets.sec_token }}
+    # Allow intermediate customization
+    - name: '[Debug/Menuconfig] Wait for SSH connection (timeout 30min)'
+      if: env.SKIP_TARGET == '0' && env.OPT_DEBUG == '1' && env.TEST != '1'
+      env:
+        TMATE_DOCKER_CONTAINER: ${{env.BUILDER_CONTAINER_ID}}
+      uses: tete1030/safe-debugger-action@dev
+
+    - name: Prepare config file
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/09-prepare_config.sh
+
+    - name: Download packages
+      if: env.SKIP_TARGET == '0'
+      run: scripts/cisteps/build-openwrt/10-download_packages.sh
+
+    - name: Print disk space
+      if: env.SKIP_TARGET == '0'
+      run: df -h
+
+    - name: Compile firmware and packages with multiple threads
+      id: mtcompile
+      if: env.SKIP_TARGET == '0'
+      continue-on-error: true
+      run: scripts/cisteps/build-openwrt/11-compile_multi.sh
+
+    - name: Compile firmware and packages with single threads when failed
+      if: env.SKIP_TARGET == '0' && steps.mtcompile.outputs.started == '1' && steps.mtcompile.outputs.status != 'success'
+      run: scripts/cisteps/build-openwrt/12-compile_single.sh
+
+    - name: Print disk space
+      if: env.SKIP_TARGET == '0'
+      run: df -h
+
+    # failure checking
+    - name: '[Failure/Debug] Wait for SSH connection (timeout 30min)'
+      if: |
+        env.SKIP_TARGET == '0' && !cancelled()
+        && (job.status == 'failure' || (env.OPT_DEBUG == '1' && env.TEST != '1'))
+      env:
+        TMATE_DOCKER_CONTAINER: ${{env.BUILDER_CONTAINER_ID}}
+      uses: tete1030/safe-debugger-action@dev
+
+    - name: Upload builder
+      if: |
+        env.SKIP_TARGET == '0' && !cancelled() && (
+          job.status == 'success'
+          || env.OPT_PUSH_WHEN_FAIL == '1'
+        )
+      run: scripts/cisteps/build-openwrt/13-upload_builder.sh
+
+    - name: Organize files
+      if: env.SKIP_TARGET == '0' && !cancelled() && job.status == 'success'
+      run: scripts/cisteps/build-openwrt/14-organize_files.sh
+
+    - name: Upload packages
+      uses: actions/upload-artifact@main
+      if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
+      with:
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package
+        path: ${{env.HOST_BIN_DIR}}
+
+    - name: Upload firmware
+      uses: actions/upload-artifact@main
+      if: env.SKIP_TARGET == '0' && env.TEST != '1' && env.OPT_PACKAGE_ONLY != '1' && !cancelled() && job.status == 'success'
+      with:
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware
+        path: firmware
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
+      with:
+        allowUpdates: true
+        artifacts: "${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip,${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package.zip,${{env.HOST_BIN_DIR}}/config.seed"
+        bodyFile: "body.md"
+        commit: ${{ github.sha }}
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}
+        tag: ${{ steps.set_info.outputs.buildtime }}|${{env.BUILD_TARGET}}
+        token: ${{ secrets.sec_token }}
+
+    # failure checking
+    - name: '[Failure/Debug] Wait for SSH connection (timeout 30min. You are safe to cancel the job now.)'
+      if: |
+        env.SKIP_TARGET == '0' && !cancelled()
+        && (job.status == 'failure' || (env.OPT_DEBUG == '1' && env.TEST != '1'))
+      uses: tete1030/safe-debugger-action@dev
