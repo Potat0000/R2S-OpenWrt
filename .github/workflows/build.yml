@@ -82,17 +82,17 @@ jobs:
       if: env.SKIP_TARGET == '0'
       run: |
         if [ "$GITHUB_ACTOR" = "gyj1109" ];then
-          buildname=Gyj1109
+          builduser=Gyj1109
         else
-          buildname=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
+          builduser=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
         fi
         buildtime=$(date +%Y-%m-%dT%H-%M)
         sed -i s/BUILDTIME/$buildtime/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
-        sed -i s/BUILDUSER/$buildname/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
+        sed -i s/BUILDUSER/$builduser/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
         sed -i s/BUILDTIME/$buildtime/g scripts/cisteps/build-openwrt/14-organize_files.sh
-        sed -i s/BUILDUSER/$buildname/g scripts/cisteps/build-openwrt/14-organize_files.sh
+        sed -i s/BUILDUSER/$builduser/g scripts/cisteps/build-openwrt/14-organize_files.sh
         echo "##[set-output name=buildtime;]$buildtime"
-        echo "##[set-output name=buildname;]$buildname"
+        echo "##[set-output name=builduser;]$builduser"
         echo -e "\033[32m\033[1m$buildtime\033[0m"
 
     - name: Set up Docker Buildx
@@ -179,32 +179,32 @@ jobs:
       run: scripts/cisteps/build-openwrt/13-upload_builder.sh
 
     - name: Organize files
-      if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
+      if: env.SKIP_TARGET == '0' && !cancelled() && job.status == 'success'
       run: scripts/cisteps/build-openwrt/14-organize_files.sh
 
     - name: Upload packages
       uses: actions/upload-artifact@main
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
       with:
-        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package
         path: ${{env.HOST_BIN_DIR}}
 
     - name: Upload firmware
       uses: actions/upload-artifact@main
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && env.OPT_PACKAGE_ONLY != '1' && !cancelled() && job.status == 'success'
       with:
-        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware
         path: firmware
 
     - name: Create Release
       uses: ncipollo/release-action@v1
-      if: env.SKIP_TARGET == '0' && env.TEST != '1' && env.OPT_PACKAGE_ONLY != '1' && !cancelled() && job.status == 'success'
+      if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
       with:
         allowUpdates: true
-        artifacts: "${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip,${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package.zip,firmware/config.seed"
+        artifacts: "${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip,${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package.zip,${{env.HOST_BIN_DIR}}/config.seed"
         bodyFile: "body.md"
         commit: ${{ github.sha }}
-        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}
+        name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}
         tag: ${{ steps.set_info.outputs.buildtime }}-${{env.BUILD_TARGET}}
         token: ${{ secrets.sec_token }}
 
