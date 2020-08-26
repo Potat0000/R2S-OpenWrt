@@ -82,16 +82,18 @@ jobs:
       if: env.SKIP_TARGET == '0'
       run: |
         if [ "$GITHUB_ACTOR" = "gyj1109" ];then
-          username=Gyj1109
+          buildname=Gyj1109
         else
-          username=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
+          buildname=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
         fi
         buildtime=$(date +%Y-%m-%dT%H-%M)
-        sed -i s/BUILDVERSION/$buildtime/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
-        sed -i s/BUILDUSER/$username/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
-        echo -e "\033[32m\033[1m$buildtime\033[0m"
+        sed -i s/BUILDTIME/$buildtime/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
+        sed -i s/BUILDUSER/$buildname/g ${HOST_WORK_DIR}/user/${{env.BUILD_TARGET}}/custom.sh
+        sed -i s/BUILDTIME/$buildtime/g scripts/cisteps/build-openwrt/14-organize_files.sh
+        sed -i s/BUILDUSER/$buildname/g scripts/cisteps/build-openwrt/14-organize_files.sh
         echo "##[set-output name=buildtime;]$buildtime"
-        echo "##[set-output name=username;]$username"
+        echo "##[set-output name=buildname;]$buildname"
+        echo -e "\033[32m\033[1m$buildtime\033[0m"
 
     - name: Set up Docker Buildx
       id: buildx
@@ -178,47 +180,20 @@ jobs:
 
     - name: Organize files
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
-      run: |
-        set -eo pipefail
-        shopt -s extglob
-        sudo chown -R "$(id -u):$(id -g)" "${HOST_BIN_DIR}"
-        mkdir "${HOST_WORK_DIR}/openwrt_firmware"
-        cd "${HOST_BIN_DIR}/targets/"*/*
-        all_firmware_files=( !(packages) )
-        [ ${#all_firmware_files[@]} -gt 0 ] && mv "${all_firmware_files[@]}" "${HOST_WORK_DIR}/openwrt_firmware/" || true
-        mv "${HOST_BIN_DIR}/.config" "${HOST_BIN_DIR}/config.seed"
-        cp "${HOST_BIN_DIR}/config.seed" "${HOST_WORK_DIR}/openwrt_firmware/"
-        cd "${HOST_WORK_DIR}"
-        mkdir -p "${HOST_WORK_DIR}/firmware"
-        mv "openwrt_firmware/openwrt-rockchip-armv8-friendlyarm_nanopi-r2s-squashfs-sysupgrade.img.gz" firmware/
-        mv "openwrt_firmware/config.seed" firmware/
-        cd firmware
-        gzip -d *.gz || true
-        echo -e "MD5:    \c" > checksums
-        md5sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
-        echo -e "SHA256: \c" >> checksums
-        sha256sum *.img | grep squashfs | cut -d " " -f 1 >> checksums
-        gzip *.img
-        cp checksums ${HOST_WORK_DIR}/body.md
-        zip -r "${HOST_WORK_DIR}/R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip" *
-        cd "${HOST_BIN_DIR}"
-        zip -r "${HOST_WORK_DIR}/R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Package" *
-        sed -i 's/:\ \+/: /g' "${HOST_WORK_DIR}/body.md"
-        sed -i '1iBuilt at ${{ steps.set_info.outputs.buildtime }}' "${HOST_WORK_DIR}/body.md"
-        echo "::set-output name=status::success"
+      run: scripts/cisteps/build-openwrt/14-organize_files.sh
 
     - name: Upload packages
       uses: actions/upload-artifact@main
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && !cancelled() && job.status == 'success'
       with:
-        name: R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Package
+        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package
         path: ${{env.HOST_BIN_DIR}}
 
     - name: Upload firmware
       uses: actions/upload-artifact@main
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && env.OPT_PACKAGE_ONLY != '1' && !cancelled() && job.status == 'success'
       with:
-        name: R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Firmware
+        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware
         path: firmware
 
     - name: Create Release
@@ -226,11 +201,11 @@ jobs:
       if: env.SKIP_TARGET == '0' && env.TEST != '1' && env.OPT_PACKAGE_ONLY != '1' && !cancelled() && job.status == 'success'
       with:
         allowUpdates: true
-        artifacts: "R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip,R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}-Package.zip,firmware/config.seed"
+        artifacts: "${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Firmware.zip,${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}-Package.zip,firmware/config.seed"
         bodyFile: "body.md"
         commit: ${{ github.sha }}
-        name: R2S-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.username }}-${{ steps.set_info.outputs.buildtime }}
-        tag: ${{ steps.set_info.outputs.buildtime }}
+        name: ${{ steps.set_info.outputs.buildname }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}
+        tag: ${{ steps.set_info.outputs.buildtime }}-${{env.BUILD_TARGET}}
         token: ${{ secrets.sec_token }}
 
     # failure checking
