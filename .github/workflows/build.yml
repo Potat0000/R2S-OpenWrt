@@ -87,8 +87,8 @@ jobs:
           builduser=$(echo $GITHUB_REPOSITORY | cut -d / -f 2)
         fi
         buildtime=$(date +%Y-%m-%dT%H-%M)
-        sed -i s/BUILDTIME/$buildtime/g user/${{env.BUILD_TARGET}}/custom.sh
-        sed -i s/BUILDUSER/$builduser/g user/${{env.BUILD_TARGET}}/custom.sh
+        sed -i s/BUILDTIME/$buildtime/g user/current/custom.sh
+        sed -i s/BUILDUSER/$builduser/g user/current/custom.sh
         sed -i s/BUILDTIME/$buildtime/g scripts/cisteps/build-openwrt/14-organize_files.sh
         sed -i s/BUILDUSER/$builduser/g scripts/cisteps/build-openwrt/14-organize_files.sh
         echo "##[set-output name=buildtime;]$buildtime"
