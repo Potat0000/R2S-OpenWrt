@@ -1,7 +1,7 @@
 sudo -E apt-get -y install jq
 
 cd package/lean/default-settings/files
-sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_DESCRIPTION='\1 | Build by BUILDUSER'/g" zzz-default-settings
+sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_REVISION='\1 | Build by BUILDUSER'/g" zzz-default-settings
 sed -i 's/luciversion = "[^"]*"/luciversion = "BUILDTIME"/g' zzz-default-settings
 cd ../../../..
 
