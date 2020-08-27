@@ -205,7 +205,7 @@ jobs:
         bodyFile: "body.md"
         commit: ${{ github.sha }}
         name: ${{ steps.set_info.outputs.builduser }}-${{env.BUILD_TARGET}}-${{ steps.set_info.outputs.buildtime }}
-        tag: ${{ steps.set_info.outputs.buildtime }}-${{env.BUILD_TARGET}}
+        tag: ${{ steps.set_info.outputs.buildtime }}|${{env.BUILD_TARGET}}
         token: ${{ secrets.sec_token }}
 
     # failure checking
