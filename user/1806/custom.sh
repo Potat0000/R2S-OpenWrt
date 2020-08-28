@@ -9,7 +9,7 @@ sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 cd package/ctcgfw/luci-theme-argonv3/luasrc/view/themes/argon
 a=`sed -n '/^.*"ftc".*$/=' footer.htm`
 b=`sed -n '/^.*distversion.*$/=' footer.htm`
-sed -i "$[a+1],$[b]d" footer.htm
+sed -i "$[a+1],$[b-1]d" footer.htm
 cd ../../../../../../..
 
 sed -i "s/PKG_HASH:=.*/PKG_HASH:=skip/g" feeds/packages/net/ariang/Makefile
