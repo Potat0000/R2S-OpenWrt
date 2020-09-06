@@ -10,6 +10,8 @@ sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
 sed -i 's/16384/65536/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 
+sed -i 's/if (needinit==1) {display_Init_seq();}/display_Init_seq();/g' package/ctcgfw/luci-app-oled/src/Example_Code/Main.c
+
 cd package/ctcgfw/luci-theme-argonv3/luasrc/view/themes/argon
 a=`sed -n '/^.*"ftc".*$/=' footer.htm`
 b=`sed -n '/^.*distversion.*$/=' footer.htm`
