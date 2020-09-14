@@ -4,7 +4,7 @@ sed -i "s/samba/samba4/g" package/lean/default-settings/files/zzz-default-settin
 sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_REVISION='\1 | Build by BUILDUSER'/g" package/lean/default-settings/files/zzz-default-settings
 
 sed -i '/exit 0/d' package/lean/default-settings/files/zzz-default-settings
-echo -e "sed -i \"s/\\(<%=unameinfo.release or \\\"?\\\"%>\\)/\\1<%=luci.sys.exec(\\\"test -e \\/root/VERSION \\&\\& echo ' @ ' \\&\\& cat \\/root/VERSION\\\") or \\\"\\\"%>/g\" /usr/lib/lua/luci/view/admin_status/index.htm\\n\\nexit 0" >> package/lean/default-settings/files/zzz-default-settings
+echo -e "sed -i \"s/\\(<%=unameinfo.release or \\\"?\\\"%>\\)/\\1<%=luci.sys.exec(\\\"test -e \\/VERSION \\&\\& echo ' @ ' \\&\\& cat \\/VERSION\\\") or \\\"\\\"%>/g\" /usr/lib/lua/luci/view/admin_status/index.htm\\n\\nexit 0" >> package/lean/default-settings/files/zzz-default-settings
 
 sed -i 's/Os/O3/g' include/target.mk
 sed -i 's/O2/O3/g' ./rules.mk
