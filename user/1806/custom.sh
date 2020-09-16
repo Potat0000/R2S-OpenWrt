@@ -1,5 +1,7 @@
 sudo -E apt-get -y install jq
 
+sed -i '/admin_status/d' package/lean/default-settings/files/zzz-default-settings
+
 sed -i "s/samba/samba4/g" package/lean/default-settings/files/zzz-default-settings
 sed -i "s/DISTRIB_REVISION='\([^']*\)'/DISTRIB_REVISION='\1 | Build by BUILDUSER'/g" package/lean/default-settings/files/zzz-default-settings
 
